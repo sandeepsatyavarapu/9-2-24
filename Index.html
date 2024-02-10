@@ -1,0 +1,2074 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    
+    </head>
+     <style>
+            body{
+    margin:5em;
+    padding:10px;
+            
+}
+p{
+    text-align:justify;
+}
+         hr{
+ width:830px;
+         }
+      
+        </style>
+        
+    <body>
+        <div>
+        <hr style="height:5px;
+            width:1200px;
+            background-color: black;">
+        </div>
+        <h3 style="margin-left:280px;"><b>Part 1. Learning About RODM</b></h3>
+         <div>
+        <hr style="height:5px;
+            width:1200px;
+            background-color: black;">
+        </div>
+        <h3 style="margin-left:280px;"><b>Chapter 1. Overview</b></h3>
+        <p style="margin-left:460px;">This document describes IBM Tivoli NetView for z/OS Resource Object Data<br>Manager (RODM), which runs under the z/OS operating system. This document<br>describes how to:</p>
+        <ul style="margin-left:440px;">
+            <li>Manually define your network resources to RODM so that you can manage<br>these resources using NetView management console.</li>
+            <li>Automate network operations based on the status of resources stored in RODM.</li>
+            <li>Write programs that use the services of RODM.</li>
+        </ul>
+        <p style="margin-left:460px;">RODM is an object-oriented data cache. Objects in RODM represent resources in<br>
+your network. The data cache is located entirely in the memory of the host<br>
+processor resulting in fast access to data and high transaction rates. Many<br>
+applications can interact with a single RODM, and more than one RODM can run<br>
+on a host processor. You can use RODM for many tasks. RODM provides<br>
+application programming interfaces (APIs) that can be used by any application<br>
+running in the host processor.</p>
+        <p style="margin-left:460px;">The Graphic Monitor Facility host subsystem (GMFHS) is the host program that<br>
+works with RODM and the NetView program running on the host processor, and<br>
+NetView management console to manage resources.</p>
+        <p style="margin-left:460px;">GMFHS works with the SNA topology manager and NetView management console<br>
+to manage SNA resources. For more information, see the <i>IBM Tivoli NetView for<br>
+            z/OS SNA Topology Manager Implementation Guide,</i>i SC27-2864.</p>
+       <p style="margin-left:460px;"> GMFHS also works with MultiSystem Manager and NetView management console<br>
+to manage non-SNA resources. For more information, see the <i>IBM Tivoli NetView<br>
+           for z/OS User's Guide: NetView Management Console.</i></p>
+        <hr style="width:1200px;">
+<h1 style="margin-left:280px;">Managing SNA Resources with the NetView Program</h1>
+        <p style="margin-left:460px;">Using the SNA topology manager, the NetView program provides subarea and<br>
+Advanced Peer-to-Peer Networking (APPN) network management from NetView <br>management console. You can display graphic views of resources in the network,<br>
+and you can issue commands to resources you select from the view. The views<br>
+contain both status and configuration information about your network. For more<br>
+information, see the IBM Tivoli NetView for z/OS SNA Topology Manager<br>
+Implementation Guide.</p>
+        <hr style="width:1200px;">
+        <h1 style="margin-left:280px;"> Defining Non-SNA Resources to the NetView Program</h1>
+        <p style="margin-left:460px;">Using the MultiSystem manager, the NetView program enables you to dynamically<br>
+discover and manage non-SNA networks from NetView management console. You<br>
+can display graphic views of resources in the network, and you can issue<br>
+commands to resources you select from the view. The views contain both status<br>
+and configuration information about your network.</p>
+        <p style="margin-left:460px;">You can also manually define your non-SNA resources. You need to provide<br>
+information about your network to the NetView program so that views can be<br>
+created and commands can be processed. For SNA networks, the NetView program<br>gets its information from the VTAM and NCP definitions you create. For non-SNA<br>networks, the NetView program gets its information from RODM definitions you<br>
+create. This document describes the RODM definitions that you need to create and<br>
+how you can create them.</p>
+        <p style="margin-left:460px;">NetView management console communicates with GMFHS. Figure 1 shows that<br>
+GMFHS runs in its own address space in the host and communicates with RODM,<br>
+which also runs in its own address space in the host.</p>
+        <center>
+            <img style="margin-left:125px;"src="Screenshot%201.png">
+        </center>
+        <h1 style="margin-left:380px;"> Resource Definition Task</h1>
+       <p style="margin-left:480px;"> Resources in your non-SNA network are represented by objects in the RODM data<br>
+           cache. You can create three general types of objects:</p>
+        <ul style="margin-left:460px;">
+            <li>Management objects</li>
+            <li>Management objects</li>
+            <li>Management objects</li>
+        </ul>
+        <p  style="margin-left:480px;"><i>Management objects</i> represent the programs that control parts of the network and<br>
+that connect to the NetView program. IBM Tivoli Network Manager is an example<br>
+of a management object. The programs represented by management objects send<br>
+alerts to NetView to update the status of resources in the network. These programs<br>
+receive commands from the NetView program for the network resources they<br>
+control.</p>
+        <p style="margin-left:480px;"><i>Managed objects</i> represent the network resources that you are managing. Managed<br>
+objects contain both status and configuration information. A personal computer<br>
+connected to a token-ring local area network (LAN) and a printer connected to an<br>
+Ethernet LAN are examples of resources represented by managed objects. Managed<br>
+objects must have a corresponding management object that sends status to the<br>
+NetView program and receives commands for the resource.</p>
+        <p  style="margin-left:480px;"><i>View objects </i>represent graphic views that can be displayed on NetView<br>
+management console. Most graphic views are created automatically based on the<br>
+configuration information contained in RODM. You might also want to define<br>
+specific views as well. The information about which resources to display and how <br>to display them is contained in the view object.</p>
+        <p style="margin-left:480px;"><i>Network configuration</i> information is represented by links between managed objects.<br>
+For example, each managed object representing a resource on a token-ring segment<br>
+has links to each adjacent resource on the segment. You can define both the logical<br>
+configuration and the physical configuration of your network.</p>
+        <h1 style="margin-left:390px;">  Resources Supported by GMFHS</h1>
+        <p style="margin-left:480px;">GMFHS supports resources that can send status updates to the NetView program<br>in a standard format. A service point is the program that interfaces the non-SNA<br>
+network to the SNA network that contains the NetView program. The service point<br>
+generates alerts that GMFHS converts to the status of objects in RODM.</p>
+        <p  style="margin-left:480px;">The alerts sent to the NetView program identify the resource which has changed<br>
+status. You need to assign names to RODM objects that match the names that are<br>
+supplied by alerts. For information about how GMFHS uses resource names from <br>alerts, see Chapter 6, “Customizing GMFHS to Process and Receive Alerts and<br>
+Resolutions,” on page 165. It also describes how you can customize GMFHS alert<br>
+processing to recognize additional alert types.</p>
+        <h1 style="margin-left:390px;"> Saving RODM Data</h1>
+        <p style="margin-left:480px;">All of the data in the RODM data cache is stored in memory. If you stop RODM,<br>
+shut down your processor, or your system fails, all of the data in the data cache is<br>
+lost. The checkpoint function enables you to save a copy of the data cache to DASD.<br>
+When you restart RODM, you can read in the stored data from DASD. The<br>
+checkpoint function can be requested by a program, by the z/OS console operator,<br> or by a NetView operator, if the NetView program used by the operator is set up<br>
+to send commands to z/OS. Because status information stored in RODM is<br>
+volatile, restoring data from DASD might not be appropriate.</p>
+        <p style="margin-left:480px;">A <i>warm start</i> of RODM is when you start RODM and read in checkpoint data. The<br>
+data cache contains the exact data at the time of the checkpoint. After a warm<br>
+start, you might need to update some objects in the data cache. If the applications<br>
+that maintain the status of your resources keep track of updates sent to RODM, the<br>
+applications can resend any changes since the checkpoint.</p>
+        <p style="margin-left:480px;">A cold start means you start RODM without checkpoint data. The data cache<br>
+contains only the system-defined classes. You then need to load your data model<br>
+and data.</p>
+        <hr style="width:1200px;">
+        <h1 style="margin-left:290px;"> RODM in Network Automation</h1>
+        <p  style="margin-left:480px;">Using the SNA topology manager, you can automate the management of your<br>
+subarea network. For more information, see the<i> IBM Tivoli NetView for z/OS SNA<br>
+            Topology Manager Implementation Guide.</i></p>
+        <p  style="margin-left:480px;">You can also automate the management of your non-SNA network resources using<br>
+RODM. Because GMFHS maintains the status of the non-SNA network resources in<br>
+the RODM data cache, you can write automation routines using the data in<br>
+RODM. The following RODM concepts are important to automation.</p>
+       <h1 style="margin-left:390px;"> Automation Concepts</h1> 
+        <p  style="margin-left:480px;">Two types of programs work with RODM, user applications and methods. A<br>
+            RODM<i> user application</i> is a program that runs in a different address space than<br>
+RODM, and that communicates with RODM using an API. The user application<br>
+must run on the same z/OS host as RODM. User applications can be written in<br>
+any programming language. Sample control blocks for the API are supplied for use<br>
+with PL/I and C. Therefore, you might prefer to use one of these two languages.</p>
+<p  style="margin-left:480px;">A <i>method</i> is a program that runs in the RODM address space and communicates<br>
+with RODM using another API. Methods are usually small programs that perform<br>specific tasks on data in the data cache. Running or executing a method is referred<br>
+to as <i>triggering</i> the method. Methods must be written in PL/I or C. They are<br>
+restricted in the types of functions they can perform. There are six types of
+methods:</p>
+        <ul style="margin-left:460px;">
+            <li> RODM triggers the <i>query method</i> for a field when the value of the field is<br>
+queried. For example, it can issue a command to a network resource to request<br>
+            its current status. The <i>query subfield</i> specifies the query method for a field.</li>
+            <li>RODM triggers the <i>change method</i> for a field when another method or user<br>
+application requests to change the value of the field. For example, the change<br>
+method can issue a command to change the real status of the network resource<br>
+to match the new status of the object that represents the resource in RODM. The<br>
+<i>change subfield</i> specifies the change method for a field.</li>
+            <li>RODM triggers the <i>notification method</i> when the value of a field changes. You can<br>
+define any number of notification methods for a field. It notifies user<br>
+applications of changes. The notification method is particularly valuable for<br>
+                automation tasks. The <i>notify subfield </i>specifies the notification methods for a field.</li>
+            <li>RODM triggers a <i>named method </i>when another method or user application<br>
+                requests it. A <i>named method</i> is specified by a field of an object or class. Named<br>
+methods can be used to perform some action for a particular object or class. For<br>
+example, you can create a named method that contains the commands to<br>
+activate the object with which the method is associated.</li>
+            <li>An <i>object-independent </i>method is any method that is not associated with a specific<br>
+object or class. Object-independent methods can act on many objects and classes.<br>
+For example, an object-independent method can query the status of all objects<br>
+that represent the workstations on a specified LAN.</li>
+            <li>The<i>initialization method</i>  is a special type of object-independent method. The<br>
+initialization method, if specified, is automatically triggered when RODM is
+started.</li>
+            <p>The query method, change method, notification method, and named method are<br>
+known as <i>object-specific</i> methods because they are associated with a specific object<br>
+or class. The NetView program supplies sample methods that you can use for<br>
+automation tasks.</p>
+            <p>A set of NetView services named the RODM <i>automation platform</i> makes automation<br>
+easier. The NetView automation table, command lists, and applications can issue<br>
+requests to RODM to change values of fields and trigger methods. A method that<br>
+is supplied with the NetView program sends commands to be issued by a NetView<br>
+task. And the RODM automation platform provides an enhanced API which<br>
+enables applications in the NetView address space to issue RODM functions with<br>
+less programming effort.</p>
+            </ul>
+           <h1 style="margin-left:390px;"> Automation Example</h1>   
+             <p  style="margin-left:480px;">A typical automation implementation can use methods, a user application, and the<br>
+RODM automation platform. For example, you can use a notification method to<br>
+notify your automation application when a resource fails. Your automation<br>
+application can query RODM to find the resources in the network that are related<br>
+to the resource that failed. By querying the status of the related resources, your<br>
+automation application can determine the most likely location of the problem and<br>
+can issue commands to correct the problem.</p>
+        <p style="margin-left:480px;">You can create methods associated with specific objects in RODM that issue<br>
+NetView commands using the RODM automation platform. An object-specific<br>
+method can contain the commands to activate the resource that the method is<br>
+associated with. When triggered by your automation application, the object-specific<br>
+method sends the commands to the EKGSPPI method that is supplied with the<br>
+NetView program, the commands are passed to the NetView program and issued<br>
+by an autotask. This enables the same application to activate different types of<br>
+resources without knowing the commands specific to each resource.</p>
+        <h1 style="margin-left:390px;">  For More Information</h1>  
+        <p style="margin-left:480px;">This document contains two chapters specifically about automation. Read<br>
+Chapter 7, “Writing Automation Code,” on page 179 for more information about<br>
+automation with the GMFHS data model. Read Chapter 8, “Using the RODM<br>
+Automation Platform,” on page 187 for more information about the RODM<br>
+automation platform services.</p>
+        <hr style="width:1200px;">
+        <h1 style="margin-left:290px;"> RODM Programming Tasks</h1>  
+        <p style="margin-left:480px;">While this overview has focused on using RODM to support NetView<br>
+management console and network automation, RODM can support other types of<br>
+network and system management programs. This section describes RODM<br>
+programming tasks in general.</p>
+        <p style="margin-left:480px;">RODM can be used for any task that requires a high-speed data cache manager.<br> RODM provides an application programming interface for user application<br>
+programs, and another application programming interface for methods. It also<br>
+provides a load function to simplify loading data into the data cache and<br>
+maintaining the data</p>
+        <p style="margin-left:480px;">User applications and methods have very similar interfaces to RODM. Many of the<br>
+functions that RODM provides can be used by both types of programs. Both user<br>
+applications and methods send function requests to RODM. RODM replies with a<br>
+return code and reason code to indicate if the request was successful. Some<br>
+function requests cause RODM to return data as well. A single function request<br>
+made to RODM and the response from RODM make up a <i>transaction.</i></p>
+        <h1 style="margin-left:390px;"> RODM Transactions</h1>
+        <p style="margin-left:480px;">Many transactions request RODM to take some action on a particular class, object,<br>
+field, or subfield in the data cache. For example, a user application sends a request,<br>
+to RODM to change the value of a field that represents the status of a network,<br>
+resource. The particular class, object, field, or subfield that the transaction specifies,<br>
+is the <i>target</i> of the transaction. In general, a transaction has a single target.</p>
+        <p style="margin-left:480px;">Each transaction is made using a call to RODM that passes the required<br>
+parameters for that transaction. The parameters are grouped into six control blocks:</p>
+        <ul style="margin-left:460px;">
+          <li>Access block</li>  
+<li>Transaction information block</li>
+<li>Function block</li>
+            <li>Response block</li>
+<li>Entity access information block</li>
+<li>Field access information block</li>
+            <p>Specific transactions use different blocks as needed.</p>
+            <p>The <i>access block </i>identifies the user application to RODM. Methods run within<br>
+RODM, so they never use an access block. The RODM automation platform<br>
+services CNMQAPI and DSINOR take care of the access block for applications<br>
+running in the NetView address space.</p>
+            <p>The<i>transaction information block</i>  is used to track each transaction with RODM.<br>
+RODM places the return code and reason code for the transaction in this control<br>
+block. All transactions use this block.</p>
+            <p>The <i>function block</i> specifies the RODM function to be run. It contains the particular<br>
+parameters that RODM needs to run the function. All transactions use this block.</p>
+            <p>The <i>response block</i> contains any data requested from RODM. Functions that request<br>
+data, such as query functions, use a response block.</p>
+            <p>The <i>entity access information block</i> identifies the specific class and object that is the<br>
+target of a transaction. This block is used when a class, object, field, or subfield is<br>
+the target of a transaction.</p>
+            <p>The <i>field access information block</i> identifies the specific field that is the target of a<br>
+transaction. This block is used when a field or subfield is the target of a<br>
+transaction.</p>
+        </ul>
+        <h1 style="margin-left:390px;"> RODM Functions</h1>
+        <p style="margin-left:480px;">RODM provides functions for user applications and methods. Some functions are<br>
+available only to user applications, and some are available only to methods. Many<br>
+functions are available to both. Each function requires a particular authorization<br>
+level, so you can limit the functions available to particular applications.</p>
+        <p style="margin-left:480px;">RODM provides functions to connect to and disconnect from RODM. It provides<br>
+functions to checkpoint RODM and stop RODM.</p>
+        <p style="margin-left:480px;">RODM provides a set of functions to change the structure of the elements in the<br>
+data cache. There are functions to create and delete classes, objects, fields, and<br>
+subfields. Link and unlink functions enable you to define relationships among<br>objects.</p>
+            <p style="margin-left:480px;">RODM provides a set of functions to change the values of the fields and subfields<br>
+of classes and objects. Changing the value of a field triggers its change method if<br>
+one has been defined. Changing the value of a subfield does not trigger the change<br>
+                method.</p>
+        <p style="margin-left:480px;">RODM provides query functions to get information about the classes and objects in<br>
+the data cache. Programs can query the value of any field or subfield. Querying<br>
+the value of a field triggers its query method if one has been defined. Querying the<br>
+value of a subfield does not trigger the query method. Programs can also query the<br>structure of the elements in the data cache. RODM also provides the ability to<br>
+locate objects in RODM based on the value of a character field.</p>
+        <p style="margin-left:480px;">RODM provides functions to support the notification process. Programs can add<br>
+and delete notification subscriptions. User applications can get information from<br>
+the notification queue. Notification methods support the RODM notification<br>
+process.</p>
+        <p style="margin-left:480px;">Other functions enable you to write diagnostic information to the RODM log and,<br>
+trigger methods. You can issue a list of functions in a single call to RODM. You can<br>
+also issue asynchronous requests to RODM.</p>
+        <p style="margin-left:480px;">Each function is described in detail in Chapter 14, “Application Programming<br>
+Reference,” on page 371. There are sample function blocks and programming<br>
+examples for each function RODM provides</p>
+ <h1 style="margin-left:390px;"> Programming Languages</h1>
+        <p style="margin-left:480px;">User applications access RODM using the RODM user application programming<br>
+interface. User applications can be written in any programming language<br>
+supported by your z/OS environment. However, RODM samples and examples are<br>
+provided only in PL/I and C.</p>
+        <p style="margin-left:480px;">Methods access RODM using the RODM method application programming<br>
+interface. RODM methods can be written only in PL/I or C. Many methods that<br>
+are supplied with the NetView program are supplied in source format. You can use<br>
+these methods as models to write your own RODM methods.</p>
+        <h1 style="margin-left:390px;">RODM Notification Process</h1> 
+        <p style="margin-left:480px;">The RODM notification process enables user applications to receive asynchronous<br>
+notification of events. User applications subscribe to fields in the data cache. When<br>
+the value of the field changes, the notification method associated with the field is<br>
+triggered. The notification method writes information about the change to a<br>
+notification queue and RODM posts the event control block (ECB) for the user<br>
+application.</p>
+        <p style="margin-left:480px;">The user application waits until its ECB is posted by RODM. The user application<br>
+calls the EKGWAIT module to wait until the ECB is posted. The user application<br>
+gets the information from the notification queue and takes the appropriate actions.<br>
+When it finishes processing an event, the user application waits to be notified of<br>
+the next event.</p>
+        <h1 style="margin-left:390px;">RODM Load Function</h1>  
+        <p style="margin-left:480px;">The RODM load function provides an easy way to load the class structure and<br>
+objects into the RODM data cache. See the <i>IBM Tivoli NetView for z/OS Data Model<br>
+Reference </i>for more information about data models, class structures, fields, and<br>
+objects.</p>
+        <p style="margin-left:480px;">You create input statements for each class and object which are processed by the<br>
+load function. You can use the load function to load the initial structure and objects<br>
+into the data cache, and you can also use it to update and maintain the data cache<br>
+at any time.</p>
+        <p  style="margin-left:480px;">The RODM load function accepts two types of input statements:</p>
+        <ul style="margin-left:460px;">
+            <li ><i>High-level</i>  RODM <i>load function statements</i> enable you to create and delete classes<br>
+and objects. Each create statement defines one class or object and all of its fields.<br>
+A single high-level RODM load function statement can do the work of many<br>
+RODM transactions.</li>
+            <li>RODM <i>load function primitive statements</i> enable you to make changes to the<br>
+RODM data cache that are not possible with the high-level RODM load function<br>
+statements. For example, you can trigger an object-independent method or<br>
+change the value of a subfield in the data cache using RODM load function<br>
+primitive statements.</li>
+        </ul>
+            <hr style="width:1200px;">
+         <h1 style="margin-left:290px;">Additional RODM Documentation</h1>
+        <p style="margin-left:480px;">This document contains information about defining a network to the GMFHS data<br>
+model, loading the data model into the RODM data cache, and writing application<br>
+programs and methods that use RODM. Other documents in the NetView library<br>
+contain information about RODM that can be of use to you when you are<br>
+performing the tasks that are outlined in this document:</p>
+        <p  style="margin-left:480px;"><i>IBM Tivoli NetView for z/OS Installation: Configuring Graphical Components</i></p>
+        <p style="margin-left:520px;">Describes procedures for installing the NetView program and for<br>
+customizing your system and tailoring your network for your needs,<br>
+including the following information:</p>
+        <ul style="margin-left:500px;">
+            <li>Defining RODM as an MVS Subsystem</li>
+<li>Setting up Security</li> 
+<li>Defining the RODM Log</li>
+<li>Updating the RODM Start Procedure</li> 
+<li>Defining Global Variables for RODM</li> 
+<li>Defining RODM Using the EKGCUST Member</li>
+<li>Defining Initialization Values for RODM DSIQTSK Task</li> 
+        </ul>
+        <p style="margin-left:480px;"><i>IBM Tivoli NetView for z/OS Administration Reference</i></p>
+        <p  style="margin-left:520px;">Contains the following information:</p>
+        <ul style="margin-left:500px;">
+            <li> The statements that are used to define RODM and the RODM
+automation task
+ </li>
+            <li>Customizing RODM using the EKGCUST member</li>
+        </ul>
+        <p style="margin-left:480px;"><i>IBM Tivoli NetView for z/OS Security Reference</i></p>
+        <p  style="margin-left:520px;">This document contains information for defining RODM security.</p>
+        <p style="margin-left:480px;"><i>IBM Tivoli NetView for z/OS Automation Guide</i></p>
+        <p style="margin-left:520px;">Describes how to use RODM as part of NetView automation.</p>
+        <p style="margin-left:480px;">IBM Tivoli NetView for z/OS Troubleshooting Guide</p>
+        <p  style="margin-left:520px;">Contains information about diagnostics and troubleshooting, including the<br>
+following information:</p>
+        <ul style="margin-left:500px;">
+            <li>Debugging methods</li>
+<li>The RODM log</li> 
+            <li>The RODM dump utility</li>
+<li>The RODM load utility error listing</li> 
+<li> Using RODM API statistics to improve RODM performance</li>
+        </ul>
+        <p style="margin-left:480px;">IBM Tivoli NetView for z/OS Messages and Codes Volume 2 (DUI-IHS)</p>
+        <p style="margin-left:520px;">Describes the messages that are returned by RODM. RODM messages are<br>
+prefixed with EKG.</p>
+        <p style="margin-left:480px;">IBM Tivoli NetView for z/OS SNA Topology Manager Implementation Guide</p>
+        <p style="margin-left:520px;">Describes how to use the SNA topology manager</p>
+        <p style="margin-left:480px;">IBM Tivoli NetView for z/OS Data Model Reference</p>
+        <p style="margin-left:520px;">Describes the GMFHS, SNA topology manager, and MultiSystem manager<br>
+data models.</p>
+        <p style="margin-left:480px;">IBM Tivoli NetView for z/OS Tuning Guide</p>
+        <p style="margin-left:520px;">Provides information for tuning RODM and GMFHS.</p>
+        <p style="margin-left:480px;">IBM Tivoli NetView for z/OS User's Guide: NetView</p>
+        <p style="margin-left:520px;">Provides information for operators and system programmers on how to<br>
+use the NetView program, including RODM and GMFHS.</p>
+        <hr style="width:1200px;">
+         <h1 style="margin-left:290px;">  Tools for RODM</h1>
+        <p style="margin-left:480px;">The NetView program provides the following tools for use with RODM:</p>
+        <ul style="margin-left:460px;">
+        <li>RODMView</li>
+        <li> RODM unload function</li>
+        <li>FLCARODM (RODM Access Facility)</li> 
+<li> RODM Collection Manager</li>
+<li>BLDVIEWS</li> 
+<li> DELVIEWS</li>
+        </ul>
+        <p style="margin-left:480px;">For more information about these tools, see Appendix A, “RODM Tools,” on page<br>
+513</p>
+        <hr  style="width:1200px;">
+      <h1 style="margin-left:290px;">RODM Samples and Macros</h1>  
+        <p style="margin-left:480px;">The NetView program provides sample code that you can use to set up your own<br>
+network in RODM and to learn how to write application programs and methods. It<br>
+also supplies macros for you to include in the application programs and methods<br>
+that you write. The sample code and macros, which are shipped with the NetView<br>
+product, can be found in the following libraries:</p>
+        <h3 style="margin-left:480px;">NETVIEW.V6R2M1.CNMSAMP</h3>
+        <p style="margin-left:550px;">This library contains sample code that you can use to define and load your<br>
+network into RODM. Additionally, this library contains sample code that<br>
+you can use to learn how to connect to RODM and how to write<br>
+application programs and methods that use GMFHS automation. The<br>
+names of the function samples have prefixes EKG5 and EKG6.</p>
+  <h3 style="margin-left:480px;">NETVIEW.V6R2M1.SCNMMAC1</h3>
+        <p style="margin-left:550px;">This library contains the macros that you include in your application<br>
+programs and methods. The names of these macros have prefixes EKG1,<br>
+EKG2, EKG3, and EKG4. For more information about these macros, see<br>
+Chapter 14, “Application Programming Reference,” on page 371.</p>
+      <p style="margin-left:480px;">  Some of these macros and parts of the sample code are described in this document.<br>
+The names of the specific macros or functions are listed in the sections in which<br>
+they are described.</p>
+        <hr style="height:3px;
+            width:1200px;
+            background-color: black;">
+        <h1 style="margin-left:280px;"> Part 2. Defining Resources to the NetView Program</h1>
+        <p style="margin-left:480px;">You can manually define your network configuration to the NetView program<br>
+based on the GMFHS data model. This chapter first describes a sample network,<br>
+and then shows the steps for manually defining a network.</p>
+        <p  style="margin-left:480px;"><b>Notes:</b></p>
+        <p style="margin-left:480px;">1. You can use the SNA topology manager to define your SNA network to<br>
+RODM. Refer to the<i> IBM Tivoli NetView for z/OS SNA Topology Manager<br>
+            Implementation Guide</i> for more information.</p>
+        <p style="margin-left:480px;">  2. You can use MultiSystem Manager to define your non-SNA network to RODM.</p>
+        <p style="margin-left:480px;">To help you manually define your network to RODM, a sample object load file,<br>
+DUIFSNET, is provided with the NetView program. The sample file contains the<br>
+RODM load function statements that define the sample network to RODM.</p>
+        <p style="margin-left:480px;">You manually define your network using RODM load function statements. You can<br>
+generate these statements in any of the following ways:</p>
+        <ul>
+            <li style="margin-left:460px;">If you have configuration information stored in a repository, write a conversion<br>
+program to convert the information to the RODM load file format presented in<br>
+Chapter 10, “Using the RODM Load Function,” on page 239.</li>
+            <li style="margin-left:460px;">Create the configuration definitions with a text editor</li>
+        </ul>
+        <p style="margin-left:480px;">You can also define your network without using the RODM load function. If you<br>
+have your network configuration information stored in a database, you can write a<br>
+RODM user application that places the configuration information directly into<br>
+RODM. Your user application puts the data into RODM by issuing calls to the<br>
+RODM user API. See Chapter 11, “Writing Applications that Use RODM,” on page<br>
+305 for information about writing RODM user applications.</p>
+        <hr style=" width:1200px;">
+       <h1 style="margin-left:280px;"> Manual Network Definition Overview</h1> 
+        <p style="margin-left:480px;">To manually define your network configuration to RODM, perform the following<br>
+tasks in the order listed:</p>
+        <p  style="margin-left:480px;">1. Analyze your configuration and identify the network elements that you need to<br>
+define to RODM.</p>
+        <p  style="margin-left:480px;">2. Define the management objects in your network. Management objects are:</p>
+        <ul style="margin-left:460px;">
+            <li>SNA domains</li>
+            <li>Network management gateways</li>
+<li> Non-SNA domains</li>
+        </ul>
+        <p  style="margin-left:480px;">3. Define the managed objects in your networks. Managed objects are:</p>
+        <ul style="margin-left:460px;">
+            <li>Real non-SNA objects for which you are to receive status, alerts, or both<br>
+through a service point 
+            <li>SNA objects that appear in views with non-SNA objects</li>
+<li>Aggregate objects</li>
+        </ul>
+        <p style="margin-left:480px;">4. Define connectivity relationships for the resources in your network. Examples<br>
+of connectivity relationships include logical and physical connectivity, <br>parent-child, composed-of-logical, composed-of-physical, and is-part-of.</p>
+        <p style="margin-left:480px;">5. Define the types of views of your configuration that you want the operator to
+see.</p>
+        <hr style="width:1200px;">
+        <h1 style="margin-left:280px;">  Sample Network</h1>
+        <p  style="margin-left:480px;">This chapter uses a sample network (as shown in Figure 2) to describe how to<br>
+define your network to RODM. This network contains both SNA and non-SNA<br>
+components.</p>
+        <center>
+            <img src="Screenshot%202024-02-10%20063248.png">
+        </center>
+        <h1 style="margin-left:380px;"> SNA Components of the Sample Network</h1>
+        <p style="margin-left:500px;">The sample network consists of two network domains: network NETA and<br>
+network NETB.</p>
+        <p style="margin-left:500px;">  Network NETA consists of the following components:</p>
+        <ul  style="margin-left:480px;">
+            <li> Host processor A01MPU, running a NetView program and VTAM</li>
+            <li> NCP A04A54C, which connects the host processor to a token-ring LAN</li>
+            <li> NMG A0488P21, which manages the token-ring LAN network (TRLAN network)</li>
+            <li>Token-ring LAN network</li>
+        </ul>
+        <p style="margin-left:500px;">  Network NETB consists of the following components:</p>
+        <ul style="margin-left:480px;">
+        <li> Host B01MPU, running a NetView program and VTAM
+            <li> NCP B30A54C, which connects the host to a token-ring</li>
+            <li> NMG B3088P1, which manages the Ethernet network</li>
+            <li>NMG B3088P2, which manages the sysplex network</li>
+            <li> Ethernet network</li>
+<li>Sysplex network</li>
+        </ul>
+        <p style="margin-left:500px;">he two host systems are connected by two logical gateway connectors, V01LG01<br>
+and V63LG01, through NCP/Token-Ring interconnection (NTRI). These logical<br>
+gateway connectors between the two NCPs are associated with the two token-ring<br>
+LANs with a bridge between them. The SNA links connecting the service points to<br>
+their NCPs also use token rings for their underlying physical connectivity.</p>
+        <p style="margin-left:500px;">The hosts, NCPs, service points, gateway connectors, and link connectors in the<br>
+sample network are SNA resources managed by the NetView and VTAM<br>
+programs. The focal point NetView program, GMFHS, and RODM run in host<br>
+A01MPU. The NetView management console monitors these SNA resources and<br>
+generates views for them.</p>
+      <h1 style="margin-left:380px;"> Non-SNA Components of the Sample Network</h1>  
+        <p style="margin-left:500px;">NetView management console does not recognize the non-SNA components of the<br>
+sample network. For a NetView management console to manage these non-SNA<br>
+            components, they must be defined to RODM using the GMFHS data model.</p>
+        <h3 style="margin-left:500px;"><b>Service Points</b></h3>
+        <p  style="margin-left:500px;">The following four service points, defined as network management gateways, are<br>
+in the sample network:</p>
+        <ul style="margin-left:480px;">
+            <li >NMG B3088P1 runs the SYNOPTAP transaction program, which manages the
+                Ethernet network. <li>NMG B3088P2 runs the NetView program, which manages the remote sysplex. </li><li> NMG A0488P21 runs in the token-ring LAN and manages the TRLAN network. </li><li> NMG A0488P31 manages the ITNM network</li>
+        </ul>
+        <h3  style="margin-left:500px;"><b>Sysplex Network</b></h3> 
+        <p style="margin-left:500px;">Figure 3 on page 18 shows more detail about the sysplex network shown in the<br>
+sample network. The sysplex network consists of:</p>
+        <ul style="margin-left:480px;">
+            <li>
+                PLEX1 reports to enterprise master NetView program in NMG B3088P2.  
+            </li>
+            <li> The RALXT1 and RALXT2 z/OS systems connect to PLEX1.</li>
+        </ul>
+          <img style="margin-left:500px;"src="Screenshot%202024-02-10%20064943.png">
+        <h3  style="margin-left:500px;"><b>Ethernet Network</b></h3>
+        <p style="margin-left:500px;">Figure 4 shows more detail of the Ethernet network in the sample network. An<br>
+adapter on service point B3088P1 connects the service point to synoptic<br>
+concentrator CNTR3000. The concentrator is connected to the host systems through<br>
+three connectors:</p>
+        <ul style="margin-left:480px;">
+            <li> Connector NSL_ENET, which is associated with the Windows system and the
+AIX®
+                system</li>
+            <li> Connector NSL_B202, which is associated with host AS400.</li> <li>Connector OEMLAB, which is associated with two non-SNA (Solaris and Linux)
+            hosts</li>
+            
+        </ul>
+         <img style="margin-left:500px;"src="Screenshot%202024-02-10%20065717.png">
+        <h3  style="margin-left:500px;"> Token-Ring Local Area Network</h3>
+        <p  style="margin-left:500px;">Figure 5 on page 19 shows token-ring network TRLAN. It consists of the following<br>
+resources:</p>
+        <ul style="margin-left:480px;">
+            <li> Adapter TRADPTR, which connects NCP A04A54C to the token ring</li>
+            <li> Resource A04N1088, which is the SNA line representing the token-ring interface<br>
+                coupler (TIC)</li>
+<li> Resource A04P1088, which is defined for the SNA physical unit (PU) for the TIC</li>
+            <li>Resources A0488P21 through A0488P25, which are token-ring adapters for<br>
+programmable workstations and are associated with the appropriate adapter<br>
+                addresses in the LAN Manager</li>
+<li> BRIDGE01, which is a bridge on the LAN that connects to another token ring in<br>
+NETB</li>
+           <p> The sample network defines SNA PU 2 resources representing the programmable<br>
+workstations to SNA, and has named the SNA PUs A0488P21 through A0488P25,<br>
+associating the SNA PUs to the adapter resident in each workstation that supports<br>
+a PU. The sample network uses the DisplayResourceName field to specify the<br>
+name that is displayed for each resource in the token-ring network. For example,<br>
+the object LANMGR.10005AC35CA0 has its DisplayResourceName field set to<br>
+A0488P21. This enables you to display names for resources that are meaningful to<br>
+               your operators.</p>
+        </ul>
+        <img style="margin-left:500px;" src="Screenshot%202024-02-10%20070459.png">
+        <h3  style="margin-left:500px;">ITNM Network</h3>
+        <p style="margin-left:500px;">Figure 6 on page 20 shows more detail for the ITNM network in the sample<br>
+network. The ITNM network is the IP network that is managed by IBM Tivoli<br>
+Network Manager. The ITNM network consists of the following resources:</p>
+        <ul style="margin-left:480px;">
+            <li> IBM Tivoli Network Manager</li>
+<li>Workstations T46A, T47A, T47B, T48A, and T48B</li>
+        </ul>
+        <p style="margin-left:500px;">IBM Tivoli Network Manager is configured on the A0488P31 system. Workstations<br>
+T46A, T47A, T47B, T48A, and T48B are connected to the TCP/IP network in which<br>
+IBM Tivoli Network Manager resides. IBM Tivoli Network Manager converts<br>
+selected traps related to these resources into alerts, which are then sent to the focal<br>
+point host A01MPU.</p>
+        <img style="margin-left:500px;" src="Screenshot%202024-02-10%20071557.png">
+    <hr style="width:1200px;">
+        <h1 style="margin-left:280px;">  Identifying Network Elements to Define</h1>
+    <p style="margin-left:500px;">To properly define your network to RODM, assess your network components and<br>
+their configuration, and then identify the network elements. The elements to<br>
+identify are:</p>
+    <ul style="margin-left:480px;">
+        <li>Management objects</li>
+        <li> Managed objects</li>
+        <li> Connectivity relationships</li>
+<li>Desired views</li>
+    </ul>
+    <h1  style="margin-left:400px;"> Identifying Management Objects</h1>
+    <p style="margin-left:500px;">Management objects represent the programs that control the components of a<br>
+network and connect the components to the NetView program. These programs<br>
+send alerts to the NetView program to update the status of resources in the<br>
+network and receive commands from the NetView program for the resources that<br>
+they control. Three types of management objects need to be identified to RODM:</p>
+    <ul  style="margin-left:480px;">
+        <li>SNA domains
+        <li> Network management </li>
+<li>Non-SNA domains</li>
+    </ul>
+   <h3  style="margin-left:500px;">SNA Domains</h3> 
+    <p style="margin-left:500px;">An SNA domain represents one NetView program. You need to define to RODM<br>
+one SNA domain for each NetView program that can originate alerts for SNA<br>
+resources, if these SNA resources are defined as shadow objects to RODM.<br>
+        
+<p style="margin-left:500px;">You also need to define an SNA domain for each NetView program that has a<br>
+non-SNA domain reporting to it, even if it has no SNA shadow objects defined on<br>
+it. This ensures command support for the non-SNA objects and enables GMFHS to<br>
+determine if the status of resources in the non-SNA domain is known. For<br>
+    information about shadow objects, see “Identifying Managed Objects” on page 21.</p>
+<p style="margin-left:500px;">In the sample network, one SNA domain is defined for each of the NetView<br>
+programs that reside in hosts B01MPU and A01MPU.
+    </p>
+    <h3  style="margin-left:500px;">Network Management Gateways</h3>
+    <p  style="margin-left:500px;">A network management gateway (NMG) is a gateway between the NetView<br>
+program and the network management function of one or more non-SNA<br>
+networks. The AIX and IBM Tivoli Network Manager service points are examples<br>
+        of NMGs. An NMG can also be a user-written service point that uses service point<br>
+command service (SPCS) support or sends alerts by some other means.
+    </p>
+    <p style="margin-left:500px;">Two other NetView facilities that support network management gateways are the<br>
+program-to-program interface (PPI) and operator station tasks (OSTs). The<br>
+program-to-program interface provides a path for the exchange of network<br>
+management information and commands for applications that manage non-SNA<br>
+resources and run in the focal point host in address spaces other than the NetView<br>
+address space. OSTs run command procedures and command processors that<br>
+accept network management commands for, and provide status of, non-SNA<br>
+resources.</p>
+    <p style="margin-left:500px;">In the sample network, four service points are defined as network management<br>
+gateways:</p>
+    <ul style="margin-left:480px;">
+        <li> B3088P2</li>
+        <li>B3088P1</li>
+        <li>A0488P31</li>
+        <li> A0488P21</li>
+    </ul>
+    <h3  style="margin-left:500px;"> Non-SNA Domains</h3>
+    <p style="margin-left:500px;">You must define a non-SNA domain for each non-SNA network being monitored.<br>
+A non-SNA domain is uniquely identified by any combination of service point,<br>
+transaction program, and element management system.</p>
+    <p  style="margin-left:500px;">Depending on the transaction program used, the transaction program and element<br>
+management system might or might not identify themselves in alerts coming to the<br>
+NetView program for non-SNA resources. A Non_SNA_Domain_Class object needs<br>
+to be defined for each combination of service point, transaction program, and<br>
+element management system that is identified in alerts flowing to the NetView<br>
+program.</p>
+        <p  style="margin-left:500px;">In the sample network, a non-SNA domain is defined for each of the following<br>
+networks:</p>
+       
+    <ul style="margin-left:480px;"><li>The Ethernet network, which has a service point named B3088P1</li>
+        <li> The sysplex network, which is connected by NMG B3088P2</li>
+        <li>The TRLAN network, which has a service point named A0488P21</li>
+        <li>The ITNM network, which has a service point named A0488P31</li></ul>
+        <h3  style="margin-left:500px;">   Identifying Managed Objects</h3>
+        <p style="margin-left:500px;">Managed objects represent the network resources that you manage. These objects<br>
+contain status and configuration information about the network resources that they<br>
+represent. Managed objects require management objects to send status to the<br>
+NetView program and to receive commands for the resource. You identify one<br>
+managed object for each network resource that you want to manage using RODM.</p>
+        <p style="margin-left:500px;">Four types of managed objects can be defined to RODM:</p>
+        <ul style="margin-left:480px;">
+            <li> SNA topology manager class objects. The SNA topology manager objects are not<br>
+included in the sample network DUIFSNET. For more information, refer to<br>
+                the <i>IBM Tivoli NetView for z/OS SNA Topology Manager Implementation Guide.</i>
+            <li>GMFHS_Shadow_Objects_Class objects</li>
+            <li> GMFHS_Managed_Real_Objects_Class objects</li>
+<li> GMFHS_Aggregate_Objects_Class objects</li>
+        </ul>
+       <h3  style="margin-left:500px;"> GMFHS_Shadow_Objects_Class Objects</h3>  
+        <p style="margin-left:500px;">
+The SNA topology manager creates SNA objects for resources that it manages. If<br>
+you have other SNA resources that are not managed by SNA topology manager,<br> you can create GMFHS_Shadow_Objects_Class objects to represent them.<br>
+GMFHS_Shadow_Objects_Class objects represent SNA resources that you want to<br>
+relate to non-SNA resources. The status of shadow objects is not kept in RODM,<br>
+but is maintained by the NetView management console SNA support. When a<br>
+view containing shadow objects is displayed at the NetView management console<br>
+workstation, NetView management console fills in and maintains each object's<br>
+status.</p>
+        <p style="margin-left:500px;"><b>Note: </b>The NetView management console does not maintain shadow object status.<br>
+Shadow objects are displayed on the NetView management console, but the status<br>
+is always unknown.</p>
+        <p style="margin-left:500px;">If you want to relate SNA resources to non-SNA resources such as those in the four<br>
+non-SNA networks in the sample network, you need to define the SNA resources<br>
+as objects on the GMFHS_Shadow_Objects_Class. These<br>
+GMFHS_Shadow_Objects_Class objects are SNA resources, such as PUs, logical<br>
+units (LUs), and link connections, that are defined in RODM so that they can be<br>
+related to associated non-SNA resources.</p>
+        <p  style="margin-left:500px;">In the sample network, logical link connectors V01LG01 and V63LG01 have been<br>
+defined and are related to the physical path that connects the two NCPs and the<br>
+two token-ring LANs. If either of the logical link connectors is displayed with a<br>
+status of unsatisfactory, the operator can select the connector and request more<br>
+detailed information about the resource. GMFHS then locates the<br>
+GMFHS_Shadow_Objects_Class object for the connector in RODM, follows the<br>
+configuration relationships to determine what resources made up the connector,<br> and dynamically constructs and displays a view consisting of more detailed<br>
+information.</p>
+       <h3  style="margin-left:500px;">GMFHS_Managed_Real_Objects_Class Objects</h3>  
+        <p style="margin-left:500px;">GMFHS_Managed_Real_Objects_Class objects represent non-SNA resources that<br>
+are managed by a NetView management console. The status of each of these<br>
+resources is determined by alerts and command responses sent through the<br>
+network and is stored in RODM. Examples of these resources include multiplexers,<br>
+modems, software applications, and T1 element managers. You must define a<br>
+GMFHS_Managed_Real_Objects_Class object to GMFHS for each resource that you<br>
+manage. If you have added child classes to the<br>
+GMFHS_Managed_Real_Objects_Class, create objects of the child classes instead.<br>
+            For more information, refer to the <i>IBM Tivoli NetView for z/OS Data Model Reference.</i></p>
+        <p style="margin-left:500px;">In the sample network, a GMFHS_Managed_Real_Objects_Class object is defined<br>
+for each resource of interest in the four non-SNA networks. For example, in the<br>
+sysplex network shown in Figure 3 on page 18, a<br>
+GMFHS_Managed_Real_Objects_Class object is defined for the following resources:</p>
+            <li style="margin-left:500px;"> A sysplex named PLEX1</li>
+<li style="margin-left:500px;">z/OS systems RALXT1 and RALXT2</li>
+               <h3  style="margin-left:500px;">GMFHS_Aggregate_Objects_Class Objects</h3> 
+        <p style="margin-left:500px;">GMFHS_Aggregate_Objects_Class objects represent a group of objects. This group<br>
+of objects can consist of any number and combination of real objects and aggregate<br>
+objects. Examples of aggregate objects are data centers, complex circuits composed<br>
+of multiple components, and arbitrary groups of resources.</p>
+        <p style="margin-left:500px;">You can define an aggregate object to GMFHS and relate it to underlying<br>
+GMFHS_Managed_Real_Objects_Class objects. The status of the aggregate object is<br>
+determined by the status of the real objects that the aggregate object represents. If<br>
+you have added child classes to the GMFHS_Aggregate_Objects_Class, you need to<br>
+create objects of the child classes instead.</p>
+        <p style="margin-left:500px;">You can also define an aggregate object that is composed of other aggregate<br>
+objects. The status of this higher-level aggregate object is determined by the status<br>
+of the real objects that contribute to the status of the lower-level aggregate objects.<br>
+The status of the lower-level aggregate objects does not contribute to the status of<br>
+the higher-level aggregate object; only real objects contribute to the status of<br>
+aggregate objects.</p>
+        <p style="margin-left:500px;">Because GMFHS_Shadow_Objects_Class objects do not have status fields, the real<br>
+resources that they represent do not contribute to the status of an aggregate object.</p>
+        <p style="margin-left:500px;">GMFHS supports up to nine levels of aggregation. A level of aggregation is one<br>
+aggregate object composed of one or more real or aggregate objects. If a real object<br>
+is defined as a child of an aggregate parent object and that aggregate parent object<br>
+is defined as a child of another parent aggregate object, two levels of aggregation<br>
+have been defined.</p>
+        <p  style="margin-left:500px;">Aggregate objects must be defined in a strict hierarchy. An aggregate object cannot<br>
+be defined as a child aggregate object of an aggregate object that is below it in the<br>
+aggregation hierarchy</p>
+        <p style="margin-left:500px;">For more information about using aggregation, see “Aggregation Concepts” on<br>
+page 128.</p>
+        <p style="margin-left:500px;">In the sample network, an aggregate object has been defined for each of the<br>
+non-SNA networks: Ethernet, Sysplex, ITNM, and TRLAN. Each of these aggregate<br>
+objects represents all of the real resources in the respective network. The status of<br>
+each of these aggregate objects reflects the collective status of the underlying real<br>
+resources.</p>
+        <p style="margin-left:500px;">Two other aggregate objects are also defined:</p>
+        <li style="margin-left:500px;">Aggregate object WESTCTR is composed of the ETHERNET and SYSPLEX<br>
+aggregate objects. The status of WESTCTR is determined by the status of the real<br>
+resources in the Ethernet and sysplex networks.</li>
+        <li style="margin-left:500px;">Aggregate object EASTCTR is composed of aggregate objects ITNM and TRLAN.<br>
+The status of EASTCTR is determined by the status of the real resources in the<br>
+            ITNM and TRLAN networks.</li>
+        <p style="margin-left:500px;">These aggregate objects appear in the high-level view described in “Identifying<br>
+Views” on page 26.</p>
+       <h3  style="margin-left:500px;">  Identifying Connectivity Relationships</h3>
+        <p style="margin-left:500px;">Connectivity relationships are ways in which resources defined in RODM can be<br>
+connected to each other. These relationships can be physical, logical, or peer. The<br>
+GMFHS data model supports the following relationships:</p>
+        <li  style="margin-left:500px;"> ComposedOfLogical and IsPartOf</li>
+        <li  style="margin-left:500px;">ComposedOfPhysical and IsPartOf</li>
+        <li  style="margin-left:500px;"> AggregationParent and AggregationChild</li>
+        <li  style="margin-left:500px;"> ParentAccess and ChildAccess</li>
+
+        <li  style="margin-left:500px;"> PhysicalConnPP</li>
+        <li style="margin-left:500px;">LogicalConnPP</li>
+        <li  style="margin-left:500px;">PhysicalConnUpstream and PhysicalConnDownstream</li>
+        <li  style="margin-left:500px;"> LogicalConnUpstream and LogicalConnDownstream</li>
+<li  style="margin-left:500px;"> BackboneConnPP</li>
+        <h3  style="margin-left:500px;"> ComposedOfLogical and IsPartOf</h3> 
+        <p style="margin-left:500px;">ComposedOfLogical and IsPartOf create a logical relationship in which one object<br>
+is logically composed of other objects. The other objects, in turn, are part of the<br>
+first object. This logical relationship can be between any number of real objects,<br>
+aggregate objects, or shadow objects.</p>
+        <p style="margin-left:500px;">In the sample network, shadow object NETV.WECONN represents the gateway<br>
+connectors between NCP A04A54C and NCP B30A54C. It has a<br>
+ComposedOfLogical relationship with the shadow objects V01LG01 and V63LG01.<br>
+These GMFHS_Shadow_Objects_Class objects in turn have an IsPartOf relationship<br>
+with the GMFHS_Shadow_Objects_Class object NETV.WECONN.</p>
+        <p style="margin-left:500px;">If the SNA topology manager is installed, the ComposedOfLogical relationship can<br>
+be done using the SNA topology manager object instead of the shadow object.</p>
+        <p style="margin-left:500px;">When an operator selects the NETV.WECONN object in a view and requests more<br>
+detail, GMFHS follows the ComposedOfLogical relationship for the<br>
+NETV.WECONN object to retrieve all objects satisfying this relationship. GMFHS<br>
+builds a view consisting of these objects, and sends it to the workstation for<br>
+display. If a ComposedOfPhysical relationship is also defined on the<br>
+NETV.WECONN object, GMFHS also builds a view of that relationship and sends<br>
+it to the workstation for display.</p>
+        <h3  style="margin-left:500px;"> ComposedOfPhysical and IsPartOf</h3> 
+        <p style="margin-left:500px;">ComposedOfPhysical and IsPartOf create a physical relationship in which one<br>
+object is physically composed of other objects. The other objects are, in turn, part<br>
+of the first object.</p>
+        <p style="margin-left:500px;">In the sample network, the GMFHS_Aggregate_Objects_Class object named<br>
+SYSPLEX, representing an entire non-SNA network, has a ComposedOfPhysical<br>
+relationship with objects in RODM representing the host and two minicomputers,<br>
+as shown in Figure 3 on page 18. The GMFHS_Managed_Real_Objects_Class<br>
+objects in RODM representing these resources, in turn, have an IsPartOf<br>
+relationship with aggregate object SYSPLEX.</p>
+        <p style="margin-left:500px;">If an operator selects the SYSPLEX object in a view and asks for more detail,<br>
+GMFHS follows the ComposedOfPhysical relationship for the SYSPLEX object to<br>
+retrieve all objects satisfying this relationship from RODM, builds a view consisting<br><br>
+of these objects, and sends it to the workstation for display to the requesting<br>
+operator. If a ComposedOfLogical relationship is also defined on the SYSPLEX<br><br>
+object, GMFHS builds a view of that relationship also and sends it to the<br>
+workstation for display, along with the ComposedOfPhysical relationship view.</p>
+        <p style="margin-left:500px;">Although ComposedOfPhysical and IsPartOf are generally used to define a<br>
+relationship between an aggregate object and underlying real objects, this is not the<br>
+only use for this relationship. For example, you can define an object of the<br>
+GMFHS_Managed_Real_Objects_Class as being composed of other<br>
+GMFHS_Managed_Real_Objects_Class objects. In this case no aggregation occurs,<br>
+            but if the operator selects the first object and asks for more detail, a view of the<br>
+            objects that the first object is composed of is displayed.</p>
+            <h3  style="margin-left:500px;">  AggregationParent and AggregationChild</h3>
+        <p style="margin-left:500px;">AggregationParent and AggregationChild create a relationship in which one object<br>
+is the aggregate parent for one or more aggregation children. The status of the<br>
+aggregate parent is determined by the status of the aggregation children</p>
+        <p style="margin-left:500px;">The AggregationParent field of a real object links to all of the aggregate objects to<br>
+which that real object contributes status; a real object can contribute status to any<br>
+number of aggregate objects. The AggregationChild field of an aggregate object<br>
+links to all of the real objects that contribute status to that aggregate object.</p>
+        <p  style="margin-left:500px;">You do not directly create links between the AggregationParent fields and<br>
+AggregationChild fields in the GMFHS data model. Instead, GMFHS supplies a<br>
+method, DUIFCUAP, that links these fields. For example, the following RODM<br>
+load function primitive statement links the AggregationParent field of the real<br>
+object Sysplex.PLEX1.RALXT2 to the AggregationChild field of the aggregate object<br>
+Sysplex:</p>
+        <p style="margin-left:500px;font-size:12px;">OP DUIFCUAP INVOKED_WITH (SELFDEFINING)<br>
+((CHARVAR)’LINK’<br>
+(CHARVAR)’GMFHS_Managed_Real_Objects_Class.Sysplex.PLEX1.RALXT2’)<br>
+(CHARVAR)’GMFHS_Aggregate_Objects_Class.Sysplex’);</p>
+        <p style="margin-left:500px;">The DUIFCUAP method is also used to remove these links.</p>
+          <h3  style="margin-left:500px;">  ParentAccess and ChildAccess</h3> 
+        <p  style="margin-left:500px;">The ParentAccess and ChildAccess fields are used by GMFHS to build<br>
+Configuration Parents views and Configuration Children views. ParentAccess and<br>
+ChildAccess create a relationship in which one object is the parent for one or more<br>
+children objects.</p>
+      <p  style="margin-left:500px;">When an operator selects a resource and asks for a Configuration Parents view,<br> GMFHS retrieves the resource from RODM and determines the resource's entire<br>
+ancestry. It then builds a view of the objects that satisfy this relationship and<br>
+displays the view at the workstation.</p>
+        <p style="margin-left:500px;">This relationship is often useful in hierarchically-arranged networks for<br>
+determining a path to an owner of a resource. Define both the ParentAccess and<br>
+ChildAccess relationships if you want to use either the Configuration Parents view<br>
+or the Configuration Children view.</p>
+        <h3  style="margin-left:500px;"> PhysicalConnPP</h3>  
+        <p  style="margin-left:500px;">
+PhysicalConnPP creates a relationship in which one resource is physically<br>
+connected to another resource in a peer-to-peer relationship. This connection can be<br>
+either a node to link connection or a node to node connection. If the connection is<br>
+node to node, GMFHS inserts a null connector between the two nodes when it<br>
+displays a view containing the two objects</p>
+        <p style="margin-left:500px;">In the sample network, the host in the sysplex network is connected by<br>
+PhysicalConnPP relationships to two links, which are in turn connected by<br>
+PhysicalConnPP relationships to minicomputers. When the operator selects a<br>
+resource and asks to see a view consisting of those resources that are physically<br>
+connected, GMFHS uses this relationship to build and display the view.</p>
+        <h3  style="margin-left:500px;"> LogicalConnP</h3>
+        <p style="margin-left:500px;">The LogicalConnPP relationship works the same way as the PhysicalConnPP<br>
+relationship, except that this relationship is logical rather than physical.
+  <p style="margin-left:500px;">In the sample network, NCP B30A54C is connected to gateway connector V01LG01<br>
+through the LogicalConnPP relationship. Gateway connector V01LG01 is in turn<br>
+connected to NCP A04A54C by this same relationship.</p>
+       <h3  style="margin-left:500px;"> PhysicalConnUpstream and PhysicalConnDownstream</h3>
+        <p style="margin-left:500px;">  PhysicalConnUpstream and PhysicalConnDownstream are used to physically<br>
+connect objects in which direction is important. These relationships are used when<br>
+            it is important to group resources at one or the other end of a connection.</p>
+<p style="margin-left:500px;"> For example, if you are defining a multipoint link and the resources connected to<br>
+it, you can use PhysicalConnUpstream to link a controller to the link, and<br>
+PhysicalConnDownstream to link several terminals to the link. In this case, when<br>
+the operator asked for a view showing physical connectivity, the controller is<br>
+linked at one end of the link, and the terminals are all linked at the other end.
+   <h3  style="margin-left:500px;"> LogicalConnUpstream and LogicalConnDownstream</h3>  
+        <p style="margin-left:500px;">LogicalConnUpstream and LogicalConnDownstream are used to logically connect<br>
+objects in which direction is important. These relationships are the logical<br>
+counterpart of the PhysicalConnUpstream and PhysicalConnDownstream<br>
+relationships.</p>
+       <h3  style="margin-left:500px;">  BackboneConnPP</h3> 
+        <p style="margin-left:500px;">BackboneConnPP is used to show objects that are part of a subarea backbone.</p>
+        <h2 style="margin-left:420px;">Identifying Views</h2>
+        <p style="margin-left:500px;">GMFHS builds most views based on the relationships defined among the objects<br>
+that are displayed at the workstation. However, you can define four types of views<br>
+in which you specify the objects that are to be displayed: exception, network,<br>
+configuration, or more detail views. The views you define depend upon your<br>
+network.</p>
+        <h3 style="margin-left:500px;"></h3>
+        <p style="margin-left:500px;">An exception view is a collection of real, shadow, and aggregate objects that have<br>
+been defined as exceptions. No connectivity relationship is shown among these<br>
+objects. An exception view is simply a graphical list of objects. This list can be<br>
+filtered by DisplayStatus or UserStatus values of the resource object.</p>
+        <p  style="margin-left:500px;">The following list offers just a few examples of how you can define exception<br>
+views to meet your varying business needs.</p>
+        <li  style="margin-left:500px;">play all NCPs that are inactive.<br><li  style="margin-left:500px;">  To display all NCPs that are inactive except for those that are being reactivated<br>
+            by an automation routine. </li><li  style="margin-left:500px;"> To define views that contain failing resources that are specific to an operators<br>
+        area of responsibility.</li> <li  style="margin-left:500px;"> To show all lines that have failed.</li>
+        <li  style="margin-left:500px;">To define the time of day that a resource can be included in an exception view.<br> For example, suppose you have a workstation on a token-ring LAN that is<br>
+represented as a PU. During the day, you want to monitor the workstation to<br>
+ensure that its status is satisfactory. When you turn off the workstation at the<br>
+end of the day, the status of the PU changes to unsatisfactory. Depending on<br>
+            your exception view definition, the PU is included in an exception view. To<br>
+prevent this, you can create two definitions: one for regular hours and one for<br>
+off hours. At the end of the business day a timer starts an automation routine to<br>
+change from the regular hours definition to the off hours definition, and the PUs<br>
+is then excluded from the exception view. For more information, see “Defining<br>
+Exception View Objects and Criteria” on page 98<br>
+        </li>
+        <img  style="margin-left:500px;" src="Screenshot%202024-02-10%20094614.png">
+        <h3 style="margin-left:500px;">Network Views</h3>
+        <p style="margin-left:500px;">A network view is a collection of real, aggregate, and shadow objects that the<br>
+operator is to view together. When the operator selects a network view, GMFHS<br>
+retrieves the appropriate view object from RODM and determines what objects are<br>
+specified as being part of this view. GMFHS then retrieves these objects, builds a<br>
+view containing them, and displays the view at the workstation. If the objects have<br><br>
+any logical or physical connectivity relationships defined among them, these<br>
+relationships are shown in the view.</p>
+        <p style="margin-left:500px;">Two of the network views defined for the sample network are:</p>
+        <li style="margin-left:500px;">A high-level view named BIGPIC, which shows the status of the non-SNA<br>
+components of the network at a high level.<li style="margin-left:500px;"> A management view named SAMPNET, which shows the major SNA and<br>
+non-SNA components of the network that are involved in managing the<br>
+non-SNA networks.</li>
+        <p style="margin-left:500px;">Figure 8 shows the high-level view named BIGPIC. In this view, <br>WESTCTR is an aggregate object composed of the ETHERNET and SYSPLEX<br>
+aggregate objects. EASTCTR is an aggregate object composed of aggregate objects<br>
+TRLAN and ITNM. Aggregate objects ETHERNET, SYSPLEX TRLAN, and ITNM<br>
+represent the real objects in each of the non-SNA networks being managed.</p>
+        <p style="margin-left:500px;">When real objects change status, their status is reflected up to aggregate objects<br>
+ETHERNET, SYSPLEX TRLAN, and ITNM, and also to aggregate objects<br>
+WESTCTR and EASTCTR. High-level view BIGPIC, therefore, presents operators<br>
+with a view that represents all of the non-SNA real objects being managed.</p>
+        <p style="margin-left:500px;">If the status of WESTCTR changes from satisfactory to degraded, the operator can<br>
+select the WESTCTR object and ask for more detail. A view consisting of the<br>
+ETHERNET and SYSPLEX aggregate objects is displayed. Or the operator can<br>
+select the object and request a fast path to failing resource view. This view consists<br>
+of the real objects in the ETHERNET and SYSPLEX aggregate objects that are in an<br>
+exception state. This type of view can be valuable in a network that contains many<br>
+real and aggregate objects.</p>
+        <img style="margin-left:500px;" src="Screenshot%202024-02-10%20095415.png">
+        <p style="margin-left:500px;">Figure 8. High-Level View BIGPIC</p>
+        <p style="margin-left:500px;">Figure 9 on page 29 shows the management view named SAMPNET. This view<br>
+displays the major SNA and non-SNA components of the network. It contains the<br>
+SNA hosts, NCPs, and service points as well as the logical gateway connectors<br>
+linking the two NCPs. Connected to the service points that are network<br><br>
+management gateways are the aggregate objects ETHERNET, SYSPLEX, TRLAN,<br>
+and ITNM. The SNA resources shown are defined to GMFHS as<br>
+GMFHS_Shadow_Objects_Class objects</p>
+        <p style="margin-left:500px;">This view shows the major SNA and non-SNA components involved in managing<br>
+the non-SNA networks in the sample, and the relationships among them. The<br>
+operator can see the status of both the SNA and the non-SNA objects. If a<br><br>
+non-SNA aggregate changes status, the operator can select it and ask for a more<br>
+detailed view to find the source of the status change.</p>
+        <img style="margin-left:500px;" src="Screenshot%202024-02-10%20095742.png">
+        <p style="margin-left:500px;">Figure 9. Management View SAMPNET</p>
+      <h3 style="margin-left:500px;">Configuration Views</h3>  
+        <p style="margin-left:500px;">The following configuration views are predefined views. They are used to show<br>
+objects in relationship to other objects.</p>
+        <p style="margin-left:500px;"><b>View Type</b></p>
+                <p style="margin-left:550px;"><b>Description</b></p>
+        <p style="margin-left:500px;"><b>peer</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Displays objects that have a peer relationship.</p>
+       <p style="margin-left:500px;"><b>Physical</b></p>  
+        <p style="margin-left:550px;">&nbsp;&nbsp;Displays objects in a network based on a physical relationship between<br>
+objects.</p>
+        <p style="margin-left:500px;"><b>Logical</b></p>  
+        <p style="margin-left:550px;">&nbsp;&nbsp;Displays objects in a network based on a logical relationship between<br>
+objects.</p>
+        <p style="margin-left:500px;"><b>Backbone</b></p>  
+        <p style="margin-left:550px;">&nbsp;&nbsp;Displays objects that constitute a subarea backbone.</p>
+        <p style="margin-left:500px;">The following configuration views can also be dynamically built views:</p>
+        <li style="margin-left:500px;" > Backbone</li>
+        <li style="margin-left:500px;">Logical</li>
+        <li style="margin-left:500px;">Physical</li>
+        <p style="margin-left:500px;">For more information about configuration views, see “Object Discovery Process<br>
+Description for Specific Views” on page 92. The sample network contains a<br>
+configuration peer view, which is described next.</p>
+        
+        
+        <p style="margin-left:500px;">A configuration peer view is a collection of objects that share a peer relationship in<br>
+the network displayed in a view. You specify the objects that are to appear in a<br>
+configuration peer view when you define the view. Although you can specify any<br>
+type of displayable object in a peer view, select only those objects that share a peer<br>
+relationship. It is up to you to decide which objects have such a relationship.</p>
+        <p style="margin-left:500px;">When the operator selects a resource in a view and asks to see any peer views in<br>
+which that object is defined, GMFHS uses the peer view objects you define to<br>
+construct the appropriate views and sends them to the requesting operator's<br>
+workstation for display. As with network views, if the objects have any logical or<br>
+physical connectivity relationships defined among them, these relationships are<br>
+shown in the view</p>
+        <p style="margin-left:500px;">Figure 10 on page 31 is a peer view containing three objects from the ETHERNET<br>
+network in the sample network. This view contains:</p>
+        <li  style="margin-left:500px;"> Connector OEMLAB
+
+        </li>
+        <li  style="margin-left:500px;"> Connector NSL_ENET</li>
+        <li  style="margin-left:500px;">Connector NSL_B202</li>
+        <p style="margin-left:500px;">The names used in this peer view are determined by the DisplayResourceName<br>
+field of the objects. For example, the MyName value of the object displayed as<br>
+OEMLAB is LATTVIEW.656_MAIN.CNTR3000.SL02P0.</p>
+        <p style="margin-left:500px;">Each of the three objects in this peer view are linked to the DisplayResourceType<br>
+object DUIXC_RTN_LAN_ADAPTER. The DUIU5N01 icon and the<br>
+trapezoid-shaped terminal symbol are specified by the link to<br>
+DUIXC_RTN_LAN_ADAPTER. No relationships are defined between these objects<br>
+in the sample network definition, so none are displayed in the view.</p>
+        <img  style="margin-left:500px;"src="Screenshot%202024-02-10%20112255.png">
+        <p  style="margin-left:500px;">Figure 10. Peer View of ETHERNET Network</p>
+         <h3 style="margin-left:500px;">More Detail Views</h3> 
+        <p style="margin-left:500px;"><b>View Type</b></p>
+                <p style="margin-left:550px;"><b>Description</b></p>
+       <p style="margin-left:500px;"><b>Logical</b></p>  
+        <p style="margin-left:550px;">&nbsp;&nbsp;Displays objects in a network based on a Logical relationship between<br>
+objects.</p>
+        <p style="margin-left:500px;"><b>physical</b></p>  
+        <p style="margin-left:550px;">&nbsp;&nbsp;Displays objects in a network based on a physical relationship between<br>
+objects.</p>
+        <p style="margin-left:500px;">More detail views can also be dynamically built. For more information, see “More<br>
+Detail Views” on page 95.</p> 
+        <hr  style="height:3px;
+            width:1200px;
+            background-color: black;">
+       <h1  style="margin-left:290px;"> Defining Your Configuration to RODM</h1> 
+        <p style="margin-left:500px;">You can use the SNA topology manager to define APPN and subarea networks,<br>
+and you can use MultiSystem Manager to define non-SNA resources in RODM.<br>
+You can also manually define non-SNA resources in RODM as described next.</p>
+        <p style="margin-left:500px;">After you identify the resources in your network that you want to monitor with<br>
+GMFHS, you then define those resources to RODM. All resources are defined in<br>
+terms of RODM load function statements and the GMFHS data model. The source<br>
+for your definition is one or more RODM load files containing the definition<br>
+statements.</p>
+       <p style="margin-left:500px;"> This section describes how to define each of the objects you identified in the<br>
+previous section to RODM. For each type of object described previously, a<br>
+description about how that type of object is defined, the fields that must be<br>
+defined for that type of object are identified, and a sample object using the RODM<br>
+load function statements is defined. For more information about the RODM load<br>
+function statements, see Chapter 10, “Using the RODM Load Function,” on page<br>
+           239.</p>
+        <p style="margin-left:500px;">You can create the RODM load function statements required to define your<br>
+network to GMFHS using an editor, or you can write a program to convert from<br>
+your own configuration database format to the format required by the RODM load<br>
+function.</p>
+        <h2 style="margin-left:400px;"> Defining Management Objects</h2>
+        <p style="margin-left:500px;">Management objects include network management gateways, SNA domains, and<br>
+non-SNA domains. Create one NMG_Class object for each network management<br>
+gateway. Create one SNA_Domain_Class object for each SNA domain. Create one<br>
+or more Non_SNA_Domain_Class objects for each non-SNA domain, depending on<br>
+the specific information contained in alerts sent from the domain.</p>
+        <h3 style="margin-left:500px;">Defining SNA Domains</h3>
+        <p style="margin-left:500px;">Define one SNA_Domain_Class object for each SNA domain identified in your<br>
+configuration that provides access to service points that are contained in SNA<br>
+resources. This object can be displayed in a view; however, the status of<br>
+SNA_Domain_Class objects is not maintained by GMFHS.</p>
+      <p style="margin-left:500px;">   In the sample network, SNA domain B01NV is defined by the following RODM<br>
+          load function statement:</p>
+        <p  style="margin-left:500px;font-size:12px;">-- Create SNA Domain Object for B01NV --<br>
+CREATE INVOKER ::= 0000003;<br>
+OBJCLASS ::= SNA_Domain_Class;<br>
+OBJINST ::= MyName = (CHARVAR) ’B01NV’;<br>
+ATTRLIST<br>
+SNANet ::= (CHARVAR) ’NETB’;<br>
+END;</p>
+        <p style="margin-left:500px;">The name of an SNA_Domain_Class object in RODM is the 5–character NetView<br>
+domain identifier.</p>
+        <p style="margin-left:500px;">In this example, the SNA_Domain_Class object named B01NV is in an SNA<br>
+network named NETB. The object name is specified on the OBJINST parameter<br>
+and the network name is specified in the field SNANet of the ATTRLIST parameter<br>
+associated with the CREATE statement for this object. If you are defining more<br>
+than one SNA domain, the basic information in the definition remains the same for<br>
+each domain; you need only provide the name of the object and the SNA network<br>
+to which the domain is related.</p>
+               <h3 style="margin-left:500px;"> Defining Network Management Gateways</h3>
+        <P style="margin-left:500px;">Create a network management gateway object for each network management<br>
+gateway in your network.</P>
+        <p style="margin-left:500px;">In the sample network, the B3088P2 network management gateway is defined by,<br>
+the following RODM load function statement:</p>
+        <p style="margin-left:500px;">-- Create NMG Object for B3088P2 --<br>
+CREATE INVOKER ::= 0000004;<br>
+OBJCLASS ::= NMG_Class;<br>
+OBJINST ::= MyName = (CHARVAR) ’B3088P2’;<br>
+ATTRLIST<br>
+Domain ::= (OBJECTLINK)<br>
+(’SNA_Domain_Class’.’B01NV’.’ContainsResource’),<br>
+CommandRouteLUName ::= (CHARVAR) ’B01NV’,<br>
+NMGCharacteristics ::= (ANONYMOUSVAR) x’80’,<br>
+AgentStatusEffect ::= (ANONYMOUSVAR) x’80’,<br>
+TransportProtocolName ::= (CHARVAR) ’COS’,<br>
+WindowSize ::= (INTEGER) 1;<br>
+END;</p>
+        <p  style="margin-left:500px;">The name of the network management gateway object in RODM is determined as<br>
+follows:</p>
+        <li style="margin-left:500px;">If the gateway uses the common operator services (COS) facilities of the<br>
+NetView program to receive commands, the name of the network management<br>
+gateway object is the PU or LU name associated with the SNA resource that<br>
+contains the service point. <li style="margin-left:500px;"> If the gateway uses PPI interface to deliver commands and receive command<br>
+responses and alerts, the network management gateway object name is the<br>
+program-to-program interface receiver name associated with the network<br>
+management application to which the commands are sent.<br><li style="margin-left:500px;">If the gateway uses command processors and procedures running on an OST, the <br>network management gateway object name can be any name that is unique<br>
+for objects of this type.</li>
+        <p style="margin-left:500px;">is example, the value of the TransportProtocolName field is COS, which<br>
+specifies that either an SSCP-PU or an LU-LU session using the common<br>
+operations services (COS) architecture is used to transport commands and alerts<br>
+between service point B3088P2 and the NetView program. The window size is 1,<br>
+specifying that only 1 command can be outstanding against the NMG.</p>
+        <p style="margin-left:500px;">The CommandRouteLUName field is set to B01NV, specifying that commands in<br>
+host A01MPU be routed to the service point B3088P2 by a RMTCMD command,<br>
+which specifies that the commands are first sent over a NetView-NetView session<br>
+to the NetView program residing in host B01MPU. This NetView program sends a<br>
+RUNCMD command to service point B3088P2 and routes responses back to the<br>
+            NetView program in host A01MPU.</p>
+        <p style="margin-left:500px;">The TransportProtocolName field specifies how GMFHS communicates with the<br>
+network management gateway when delivering commands and accepting<br>
+responses to commands. Valid values for this field are:</p>
+        <li style="margin-left:500px;">
+             COS
+
+        </li>
+        <li style="margin-left:500px;">
+            PPI
+        </li>
+        <li style="margin-left:500px;">OST</li>
+        <li style="margin-left:500px;">NONE</li>
+        <h3 style="margin-left:500px;">Defining Non-SNA Domains</h3>
+        <p style="margin-left:500px;">Define one Non_SNA_Domain_Class object for each unique combination of service<br>
+point (SP), transaction program (TP), and element management subsystem (EMS)<br>
+in your network. The following combinations uniquely specify an object of the<br>
+Non_SNA_Domain_Class:</p>
+        <li style="margin-left:500px;">
+             SP
+
+        </li>
+          <li  style="margin-left:500px;"> SP.TP</li>
+        <li style="margin-left:500px;">SP.TP.EMS</li>
+        <li style="margin-left:500px;">TP</li>
+ <li style="margin-left:500px;">TP.EMS</li>
+        <p style="margin-left:500px;">Note that only the first three entries in the preceding list are valid for the<br>
+DOMS010 session protocol.</p>
+        <p style="margin-left:500px;">The value of the DisplayStatus field of an object in the Non_SNA_Domain_Class<br>
+represents the status of the command and response communication session<br>
+between GMFHS and the transaction program associated with the domain. It does<br>
+not indicate whether the transaction program is able to forward alert information<br>
+about the domain to GMFHS. For more information about alert handling, see<br>
+Chapter 6, “Customizing GMFHS to Process and Receive Alerts and Resolutions,”<br>
+on page 165.</p>
+        <p style="margin-left:500px;">In the sample network, Non_SNA_Domain_Class object RTP1 is defined by the<br>
+following RODM load function statement:</p>
+        <p style="margin-left:500px;font-size:12px;">
+            -- Create Non-SNA Domain Object for RTP1 --<br>
+CREATE INVOKER ::= 0000003;<br>
+OBJCLASS ::= Non_SNA_Domain_Class;<br>
+OBJINST ::= MyName = (CHARVAR) ’A0488P31.A94306F8.RTP1’;<br>
+ATTRLIST<br>
+EMDomain ::= (CHARVAR) ’RTP1’,<br>
+DomainCharacteristics ::= (ANONYMOUSVAR) x’0072’,<br>
+InitialResourceStatus ::= (INTEGER) 132,<br>
+PresentationProtocolName ::= (CHARVAR) ’PASSTHRU’,<br>
+SessionProtocolName ::= (CHARVAR) ’PASSTHRU’,<br>
+TransactionProgram ::= (CHARVAR) ’A94306F8’,<br>
+ReportsToAgent ::= (OBJECTLINK)<br>
+(’NMG_Class’.’A0488P31’.’ReportsOnDomain’);<br>
+END;
+        </p>
+        <p style="margin-left:500px;">In this example the following field values are specified for the object of the<br>
+Non_SNA_Domain_Class:</p>
+        <li style="margin-left:500px;">The MyName field consists of three names, separated by periods:</li>
+        <p style="margin-left:500px;">– The name of the service point (A0488P31)<br> – The name of the transaction program (A94306F8)<br> – The name of the element management subsystem (RTP1)</p>
+        <p style="margin-left:500px;">The element management subsystem contains only the element management<br>
+domain name; RTP1 in this example.</p>
+        <p>
+           <li style="margin-left:500px;">The DomainCharacteristics field specifies:</li>
+            <p style="margin-left:500px;">– The transaction program NAP supports native commands, display status,<br>
+activate, and deactivate commands. <br>– Resource name elements are concatenated with periods building the full name<br>
+of the reported-on resource.<br> – The transaction program returns responses for commands.<br>– The soliciting of resource status of real objects in the domain is suppressed.</p>
+        <li style="margin-left:500px;"> The InitialResourceStatus field specifies that a satisfactory status is reported for<br>
+resources managed by transaction program NAP until the actual resource status<br>
+is reported by alerts or by response to a command.</li>
+        <li style="margin-left:500px;">The PresentationProtocolName field specifies DOMP020. The DOMP020 protocol<br>
+specifies that GMFHS substitutes a command string for each generic command.<br>
+GMFHS uses the command string from the object of<br>
+GMFHS_Managed_Real_Objects_Class that is the target of the generic command,<br>
+or from the object of the Non_SNA_Domain_Class that is the domain of the<br>
+target of the generic command. For example, GMFHS substitutes the value of<br>
+the ActivateCommandText field when an activate generic command is selected.</li>
+        <li style="margin-left:500px;"> The SessionProtocolName field specifies PASSTHRU, which means that GMFHS<br>
+assumes a session exists with the transaction program associated with this
+domain.</li>
+        <li style="margin-left:500px;">The ReportsToAgent field specifies that the domain is associated with the service<br>
+point and the NMG_Class object defined for that service point (A0488P31).</li>
+        <p style="margin-left:500px;">Because in this sample the domain is not displayed in any views, no connectivity<br>
+is defined for it.</p>
+        <h2 style="margin-left:400px;">Defining Managed Objects</h2>
+        <p style="margin-left:500px;">Managed objects include SNA resources, non-SNA real resources, and aggregate<br>
+resources. You can use the SNA topology manager to load SNA objects into<br>
+RODM, or you can manually define GMFHS_Shadow_Objects_Class objects using<br>
+the process described next. This section describes how to define these resources to<br>
+RODM.</p>
+        <p style="margin-left:500px;"><b>Note:</b> Because the alerts sent to the NetView program identify resources that have<br>
+changed status, assign names to managed objects that match the names that are<br>
+supplied by the alerts. For information about how GMFHS uses resource names<br>
+from alerts, see Chapter 6, “Customizing GMFHS to Process and Receive Alerts<br>
+and Resolutions,” on page 165.</p>
+       <h3  style="margin-left:500px;"> Defining SNA Resources</h3> 
+        <p  style="margin-left:500px;">Define one object of the GMFHS_Shadow_Objects_Class for each SNA resource<br>
+that you want to define to RODM. Although the status of SNA resources is not<br>
+stored in RODM, you might want to define SNA resources to RODM for one or<br>
+more of the following reasons:</p>
+        <li  style="margin-left:500px;"> To show the relationship between SNA and non-SNA resources</li>
+        <li  style="margin-left:500px;"> To obtain alert history for SNA resources</li>
+<li  style="margin-left:500px;">To obtain SNA alert pending user status</li>
+        <p  style="margin-left:500px;">In the sample network, the shadow object for SNA host B01MPU is defined by the<br>
+following RODM load function statement:</p>
+        <p  style="margin-left:500px;font-size:12px;">
+            -- Create GMFHS Shadow Object for SNA Host B01MPU --<br>
+CREATE INVOKER ::= 0000003;<br>
+OBJCLASS ::= GMFHS_Shadow_Objects_Class;<br>
+OBJINST ::= MyName = (CHARVAR) ’NETB.B01MPU’;<br>
+ATTRLIST<br>
+LocateName ::= (INDEXLIST)((CHARVAR) ’NETB.B01MPU’),<br>
+DisplayResourceName ::= (CHARVAR) ’B01MPU’;<br>
+END;<br>
+OP DUIFCLRT INVOKED_WITH (SELFDEFINING)<br>
+((CHARVAR)’LINK’<br>
+(CHARVAR)’GMFHS_Shadow_Objects_Class.NETB.B01MPU’<br>
+(CHARVAR)’Display_Resource_Type_Class.DUIXC_RTS_HOST’);<br>
+        </p>
+        <p style="margin-left:500px;">The name of a shadow object is the SNA network name of the network that<br>
+contains the SNA object, a period (.), and the SNA name of the resource. In this<br>
+example, the name is NETB.B01MPU.</p>
+        <p  style="margin-left:500px;">In this example, the host B01MPU has a DisplayResourceName of B01MPU; this<br>
+name is displayed next to the resource in all views that contain the resource. The<br>
+shadow object is assigned the DisplayResourceType of DUIXC_RTS_HOST,<br> indicating that it is an SNA Host.</p>
+        <p  style="margin-left:500px;">You do not define the relationships for GMFHS_Shadow_Objects_Class objects<br>
+when defining the objects themselves, but do so only after all objects are defined.<br>
+Therefore, linkages to other objects are defined later in this section.</p>
+        <h3 style="margin-left:500px;">Defining Non-SNA Real Resources</h3>
+        <p style="margin-left:500px;">Define an object of the GMFHS_Managed_Real_Objects_Class for each non-SNA<br>
+real resource you want to define to RODM. The name of this object is used to<br>
+correlate alerts received for the resource to the object that represents the resource.</p>
+        <p style="margin-left:500px;">If you added child classes to the GMFHS_Managed_Real_Objects_Class, you need<br>
+to create fields and objects on the child classes instead. Refer to the <i>IBM Tivoli<br>
+            NetView for z/OS Data Model Reference </i>for more information.</p>
+        <p style="margin-left:500px;">If the object you are defining is to be displayed in predefined network,<br>
+configuration, or more detail views using certain layout algorithms, you might<br>
+need to define an object of the Layout_Parameters_For_Object_Class for this object.<br>
+The definition of the Layout_Parameters_For_Object_Class object is described in<br>
+“Defining Layout Parameters for Network, Configuration, and More Detail Views”<br>
+on page 45.</p>
+        <p style="margin-left:500px;">In the sample network, the z/OS system RALXT1 is a real resource residing in the<br>
+Sysplex network. RALXT1 is defined to RODM as a<br>
+GMFHS_Managed_Real_Objects_Class object by the following RODM load<br>
+function statement:</p>
+        <p style="margin-left:500px;font-size: 12px;">-- Create a GMFHS Managed Real Object for RALXT1 --<br>
+CREATE INVOKER ::= 0000003;<br>
+OBJCLASS ::= GMFHS_Managed_Real_Objects_Class;<br>
+OBJINST ::= MyName = (CHARVAR) ’SYSPLEX.PLEX1.RALXT1’;<br>
+ATTRLIST<br>
+LocateName ::= (INDEXLIST)((CHARVAR) ’SYSPLEX.PLEX1.RALXT1’),<br>
+DisplayResourceName ::= (CHARVAR) ’RALXT1’,<br>
+Domain ::= (OBJECTLINK)<br>
+(’Non_SNA_Domain_Class’.’B3088P2.NAP.SYSPLEX’.’ContainsResource’)<br>
+END;<br>
+OP DUIFCLRT INVOKED_WITH (SELFDEFINING)<br>
+((CHARVAR)’LINK’<br>
+(CHARVAR)’GMFHS_Managed_Real_Objects_Class.SYSPLEX.PLEX1.RALXT1’<br>
+(CHARVAR)’Display_Resource_Type_Class.DUIXC_RTN_STM_SYSTEM’)</p>
+        <p style="margin-left:500px;">The name of a GMFHS_Managed_Real_Objects_Class object is used to resolve<br>
+alerts coming in for the real resource. It consists of the character string specified in<br>
+the EMDomain field of the Non_SNA_Domain_Class object representing the<br>
+non-SNA domain in which the real resource resides, and the name of the resource<br>
+as known to its transaction program and element management system, separated<br>
+by a period.</p>
+        <p style="margin-left:500px;">In this example, the z/OS system is associated with the Non_SNA_Domain_Class<br>
+object B3088P2.NAP.SYSPLEX, and is given a DisplayResourceType of<br>
+DUIXC_RTN_STM_SYSTEM. Because the DisplayResourceName field is specified,<br>
+the name that is displayed to the operator in conjunction with this resource when<br>
+it is displayed in views is RALXT1.</p>
+        <p style="margin-left:500px;">The link between an object of the GMFHS_Managed_Real_Objects_Class and an<br>
+object of the Display_Resource_Type_Class is created by a RODM load function<br>
+primitive statement that triggers the DUIFCLRT method. RODM load function<br>
+primitive statements are described in “Load Function Primitive Statements” on<br>
+page 243. The DUIFCLRT method is described in “DUIFCLRT: Link Resource Type<br>
+Method” on page 497.</p>
+        <h3 style="margin-left:500px;">Defining GMFHS Aggregate Objects</h3>
+        <p style="margin-left:500px;">Aggregate objects can be used to group resources into a higher-level resources for<br>
+monitoring purposes. You can also use exception views to monitor the resources<br>
+directly. For more information, see “Defining Exception View Objects and Criteria”<br>
+on page 98.</p>
+        <p style="margin-left:500px;">Define one GMFHS_Aggregate_Objects_Class object for each aggregate object that<br>
+you want to display in a view. If you have added child classes to the<br>
+GMFHS_Aggregate_Objects_Class, you need to create objects of the child classes<br>
+instead. To define a GMFHS aggregate object:</p>
+        <li style="margin-left:500px;"> Specify the composite relationships of the elements of the aggregate object.<br><li style="margin-left:500px;"> Specify which resources belong to the aggregate object.</li> <li style="margin-left:500px;"> Set up the hierarchies between the aggregation parent and the aggregation
+children.</li>
+        <p style="margin-left:500px;">The sample network contains a SYSPLEX object that is composed of real resource<br>
+representing the sysplex as a whole, two z/OS systems, and two links between the<br>
+z/OS systems and the sysplex, as illustrated in Figure 3 on page 18. An aggregate<br>
+object, named SYSPLEX, is defined to represent the sysplex network. The SYSPLEX<br>
+aggregate object is included in a high-level view, and its status represents the<br>
+collective status of the resources it represents. The<br>
+GMFHS_Aggregate_Objects_Class object for the network SYSPLEX is defined by<br>
+the following RODM load function statements:</p>
+        <p style="margin-left:500px;font-size:12px">-- Create a GMFHS Aggregate Object for SYSPLEX --<br>
+CREATE INVOKER ::= 0000004;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OBJCLASS ::= GMFHS_Aggregate_Objects_Class;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OBJINST ::= MyName = (CHARVAR) ’SYSPLEX’;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ATTRLIST<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ThresholdDegraded ::= (INTEGER) 1,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ThresholdSeverelyDegraded ::= (INTEGER) 2,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ThresholdUnsatisfactory ::= (INTEGER) 3,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ComposedOfPhysical ::= (OBJECTLINKLIST)<br>
+(’GMFHS_Managed_Real_Objects_Class’.’SYSPLEX.PLEX1’.’IsPartOf’)<br>
+(’GMFHS_Managed_Real_Objects_Class’.’SYSPLEX.PLEX1.RALXT1’.’IsPartOf’<br>
+(’GMFHS_Managed_Real_Objects_Class’.’SYSPLEX.PLEX1.RALXT2’.’IsPartOf’<br>
+(’GMFHS_Managed_Real_Objects_Class’.’SYSPLEX.PLEX1.LINK1’.’IsPartOf’)<br>
+(’GMFHS_Managed_Real_Objects_Class’.’SYSPLEX.PLEX1.LINK2’.’IsPartOf’);<br>
+END;<br>
+OP DUIFCLRT INVOKED_WITH (SELFDEFINING)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;((CHARVAR)’LINK’<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CHARVAR)’GMFHS_Aggregate_Objects_Class.SYSPLEX’<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CHARVAR)’Display_Resource_Type_Class.DUIXC_RTN_STM_SYSPLEX_AGG’);<br>
+OP DUIFCUAP INVOKED_WITH (SELFDEFINING)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;((CHARVAR)’LINK’<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CHARVAR)’GMFHS_Managed_Real_Objects_Class.SYSPLEX.PLEX1’<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CHARVAR)’GMFHS_Aggregate_Objects_Class.SYSPLEX’);<br>
+OP DUIFCUAP INVOKED_WITH (SELFDEFINING)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;((CHARVAR)’LINK’<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CHARVAR)’GMFHS_Managed_Real_Objects_Class.SYSPLEX.PLEX1.RALXT1’<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CHARVAR)’GMFHS_Aggregate_Objects_Class.SYSPLEX’);<br>
+OP DUIFCUAP INVOKED_WITH (SELFDEFINING)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;((CHARVAR)’LINK’<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CHARVAR)’GMFHS_Managed_Real_Objects_Class.SYSPLEX.PLEX1.RALXT2’<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CHARVAR)’GMFHS_Aggregate_Objects_Class.SYSPLEX’);<br>
+OP DUIFCUAP INVOKED_WITH (SELFDEFINING)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;((CHARVAR)’LINK’<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CHARVAR)’GMFHS_Managed_Real_Objects_Class.SYSPLEX.PLEX1.LINK1’<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CHARVAR)’GMFHS_Aggregate_Objects_Class.SYSPLEX’);<br>
+OP DUIFCUAP INVOKED_WITH (SELFDEFINING)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;((CHARVAR)’LINK’<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CHARVAR)’GMFHS_Managed_Real_Objects_Class.SYSPLEX.PLEX1.LINK2’<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(CHARVAR)’GMFHS_Aggregate_Objects_Class.SYSPLEX’);<br>
+        </p>
+        <p  style="margin-left:500px;">The definition of an aggregate object involves two sets of relationships: the<br>
+ComposedOfPhysical and IsPartOf relationship, and the AggregationParent and<br>
+AggregationChild relationship. The ComposedOfPhysical and IsPartOf relationship<br>
+determines which objects are displayed in a view when the operator selects an<br>
+object in another view and asks for more detail. The AggregationParent and<br>
+AggregationChild relationship determines which real resources are used to<br>
+calculate the status of an aggregate resource</p>
+        <p style="margin-left:500px;">In this example, the ComposedOfPhysical field of the SYSPLEX aggregate object is<br>
+linked to the IsPartOf fields of the following GMFHS_Managed_Real_Objects_Class<br>
+objects:</p>
+        <li style="margin-left:500px;"> SYSPLEX.PLEX1</li>
+        <li style="margin-left:500px;">SYSPLEX.PLEX1.RALXT1</li>
+        <li style="margin-left:500px;">SYSPLEX.PLEX1.RALXT1</li>
+        <li style="margin-left:500px;">SYSPLEX.PLEX1.RALXT2</li>
+        <li style="margin-left:500px;">SYSPLEX.PLEX1.LINK1</li>
+        <li style="margin-left:500px;">SYSPLEX.PLEX1.LINK2</li>
+        <p style="margin-left:500px;">This ComposedOfPhysical and IsPartOf relationship specifies that GMFHS is to<br>
+construct a view consisting of the specified GMFHS_Managed_Real_Objects_Class<br>
+objects and display that view at the workstation when the operator selects the v<br>
+object in a view and asks for more detail</p>
+        <p  style="margin-left:500px;">The SYSPLEX aggregate object is assigned a DisplayResourceType of<br>
+DUIXC_RTN_STM_SYSPLEX_AGG, which indicates that the object represents a<br>
+non-SNA aggregate host. The link between an object of the<br>
+GMFHS_Aggregate_Objects_Class and an object of the<br>
+Display_Resource_Type_Class is created by a RODM load function primitive<br>
+statement that triggers the DUIFCLRT method. The DUIFCLRT method is<br>
+described in “DUIFCLRT: Link Resource Type Method” on page 497.</p>
+    
+    <p style="margin-left:500px;">The SYSPLEX object is an aggregate host that represents the underlying real<br>
+resources in the sysplex network. An AggregationParent and AggregationChild link<br>
+is created between this aggregate parent and its aggregate children by RODM load<br>
+function primitive statements using the DUIFCUAP method. The DUIFCUAP<br>
+method is described in “DUIFCUAP: Update Aggregation Path Method” on page<br>
+499.</p>
+    <p style="margin-left:500px;">n general, the ComposedOfPhysical and IsPartOf relationship and the<br>
+AggregationParent and AggregationChild relationship are used in conjunction;<br>
+however, they can be used separately. For example, if you wanted a real resource<br>
+to appear in a more detailed view for an aggregate resource but did not want it to<br>
+contribute to the status of the aggregate resource, you can define the<br>
+ComposedOfPhysical and IsPartOf relationship for the aggregate object and real<br><br>
+object pair, but not define the AggregationParent and AggregationChild<br>
+relationship.</p>
+    <p style="margin-left:500px;">As another example, you might want to define a<br>
+GMFHS_Managed_Real_Objects_Class object as being composed of other<br>
+GMFHS_Managed_Real_Objects_Class objects. Then, when the user selects the first<br>
+object and asks for more detail, the objects that are defined as part of the first<br>
+object are displayed. Because the first object is not an aggregate object, the<br>
+AggregationParent and AggregationChild relationship is not defined in this case.</p>
+    <h2 style="margin-left:500px;">Defining Connectivity Relationships Between Objects</h2>
+        <p style="margin-left:500px;">Connectivity relationships between objects can determine which objects appear in<br>
+views and which resources contribute to the status of aggregate objects. With the<br>
+exception of relationships involving shadow objects, these connectivity<br>
+relationships, described in “Identifying Connectivity Relationships” on page 23, can<br>
+be defined when the objects are defined or any time after the objects are defined.<br>
+Connectivity relationships that include shadow objects can be defined only after<br>
+the shadow objects have been defined. This section illustrates how to define some<br>
+of these relationships using examples from the sample network.</p>
+        <h3 style="margin-left:500px;">Defining Logical Connectivity</h3>
+        <p style="margin-left:500px;">Objects can be connected with logical links using the LogicalConnPP field or the<br>
+LogicalConnUpstream and LogicalConnDownstream fields of the objects that are to<br>
+be connected. In the sample network, the shadow object that represents SNA host<br>
+B01MPU is logically connected to the shadow object that represents SNA NCP<br>
+B30A54C to create the relationship illustrated in Figure 9 on page 29 by using the<br>
+following RODM load function statement:</p>
+        <p  style="margin-left:500px;">-- Link Host B01MPU to NCP B30A54C --<br>
+OP ’GMFHS_Shadow_Objects_Class’.’NETB.B01MPU’.’LogicalConnPP’<br>
+IS_LINKED_TO<br>
+’GMFHS_Shadow_Objects_Class’.’NETB.B30A54C’.’LogicalConnPP’;</p>
+        <p style="margin-left:500px;">For each object that is to be linked, the class information for the object, the object<br>
+name, and the field that determines the type of link that is being defined needs to<br>
+be specified.</p>
+        <h3 style="margin-left:500px;">Defining Physical Connectivity</h3>
+        <p style="margin-left:500px;">Objects can be connected with physical links by using the PhysicalConnPP field or<br>
+the PhysicalConnUpstream and PhysicalConnDownstream fields of the objects that<br>
+are to be connected. In the sample network, non-SNA host RALV4 is physically<br>
+linked to link LINK1 by using the following RODM load function statements:</p>
+        <p style="margin-left:500px;font-size:12px;">
+            -- Link RALXT1 to Link LINK1 --<br>
+OP ’GMFHS_Managed_Real_Objects_Class’.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;’SYSPLEX.PLEX1.RALXT1’.’PhysicalConnPP’<br>
+IS_LINKED_TO<br>
+’GMFHS_Managed_Real_Objects_Class’.’SYSPLEX.PLEX1.LINK1’.’PhysicalConnPP’
+        </p>
+        <p style="margin-left:500px;">For each object that is to be linked, the class information for the object, the object<br>
+name, and the field that determines the type of link that is being defined needs to<br>
+be specified</p>
+        <h3 style="margin-left:500px;">Defining Parent-Child Relationships</h3>
+        <p style="margin-left:500px;">Parent and Child links are defined using the ChildAccess and ParentAccess fields<br>
+of the objects that are to be linked. In the sample network, the z/OS system<br>
+RALXT1 is linked to the sysplex in the configuration illustrated in Figure 3 on page<br>
+18 by using the following RODM load function statement:</p>
+        <p style="margin-left:500px;">-- Link PLEX1 to RALXT1 --<br>
+OP ’GMFHS_Managed_Real_Objects_Class’.’SYSPLEX.PLEX1’.’ChildAccess’<br>
+IS_LINKED_TO<br>
+’GMFHS_Managed_Real_Objects_Class’.’SYSPLEX.PLEX1.RALXT1’.’ParentAccess’</p>
+        <p style="margin-left:500px;">For each object that is to be linked, the class information for the object, the object<br>
+name, and the field that determines whether the object is the parent or the child<br>
+needs to be specified.</p>
+        <h3  style="margin-left:500px;">Defining Views</h3>
+        <p  style="margin-left:500px;">The following kinds of views can be defined in RODM:</p>
+        <li style="margin-left:500px;">Exception</li>
+        <li style="margin-left:500px;">Network</li>
+        <li style="margin-left:500px;">Configuration</li>
+        <li style="margin-left:500px;">More detail</li>
+        <p style="margin-left:500px;">When defining view objects, always use the RODM high-level load function<br>
+statements. RODM high-level load function statements allow all fields on the object<br>
+to be defined before the object is used. If RODM primitive statements are used,<br>
+GMFHS might attempt to access information about the view object before all of the<br>
+information is defined, and this can result in unexpected errors. For more<br><br>
+information about high-level load function and primitive statements, see to<br>
+Chapter 10, “Using the RODM Load Function,” on page 239.</p>
+        <p style="margin-left:500px;">The views that are constructed in RODM are displayed by the NetView<br>
+management console. The following sections describe parameters and layout<br>
+algorithms that are used by the graphic facility. See Appendix B, “View Layout<br>
+Facility,” on page 673 for more information about views.</p>
+        <h3 style="margin-left:500px;">Defining Exception Views</h3>
+        <p style="margin-left:500px;">Exception views are represented by objects in the Exception_View_Class. Create<br>
+one object in this class for each exception view you want to display. Use the<br>
+NetView management console to display a list of all defined views.</p>
+        <p style="margin-left:500px;">The sample network does not include an exception view. However, sample<br>
+DUIFDEXV provides an example of defining exception view objects, and the<br>
+RODM load function statements in this section can be used to define an exception<br>
+view. Figure 11 on page 41 shows an exception view of all objects in the<br>
+GMFHS_Displayable_Objects_Parent_Class that have DisplayStatus of either<br>
+severely degraded or unsatisfactory.</p>
+        <img style="margin-left:500px;" src="Screenshot%202024-02-10%20132634.png">
+        <p style="margin-left:500px;">Figure 11. Exception View of a Network</p>
+        <p style="margin-left:500px;">The exception view EXCEPTIONVIEW1 is defined by the following RODM load<br>
+function statement:</p>
+        <p style="margin-left:500px;font-size:12px;">CREATE INVOKER ::= 0000001;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OBJCLASS ::= &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Exception_View_Class;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OBJINST ::= MyName = (CHARVAR) ’EXCEPTIONVIEW1’;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ATTRLIST<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Annotation ::= (CHARVAR) ’Monitored by Operator A’,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ExceptionViewName ::= (CHARVAR) ’EXVIEW1’,<br>
+END;</p>
+        <p style="margin-left:500px;" >Use the following statement to define all objects of the class<br>
+GMFHS_Displayable_Objects_Parent_Class to be in EXCEPTIONVIEW1. Note that<br>
+you do not have to define ExceptionViewList fields at the class level. You can also<br>
+define the ExceptionViewList field at the object level.</p>
+        <p style="margin-left:500px;font-size:12px;">OP ’GMFHS_Displayable_Objects_Parent_Class’..<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;’ExceptionViewList’<br>
+HAS_VALUE (INDEXLIST)((CHARVAR) ’EXVIEW1’);</p>
+<p style="margin-left:500px;">For more information defining objects to exception views, see “Defining Exception<br>
+View Objects and Criteria” on page 98.</p>
+        <h3 style="margin-left:500px;">Defining Network Views</h3>
+        <p style="margin-left:500px;">Network views are represented by objects in the Network_View_Class. Create one<br>
+object in this class for each network view you want to display. The NetView<br>
+management console can display a list of all defined views.</p>
+        <p style="margin-left:500px;">Figure 12 on page 42 shows a network view of the SYSPLEX network component<br>
+of the sample network. The icon and symbol displayed for each object are<br>
+determined by the DisplayResourceType object to which it is linked. For example,<br>
+the resource SYSPLEX.PLEX1.RALXT1 is linked to DUIXC_RTN_STM_SYSTEM.<br>
+The icon DUIUEB2B and the square-shaped host symbol are specified by<br>
+DUIXC_RTN_STM_SYSTEM. The name RALXT1 shown in the view is specified by<br>
+the DisplayResourceName field of object SYSPLEX.PLEX1.RALXT1.</p>
+        <img style="margin-left:500px;"src="Screenshot%202024-02-10%20134234.png">
+        <p  style="margin-left:500px;">Figure 12. Network View of the Sysplex Network</p>
+        <p style="margin-left:500px;font-size:12px;">function statement: -- Create Network View for SYSPLEX --<br>
+CREATE INVOKER ::= 0000004;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OBJCLASS ::= Network_View_Class;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OBJINST ::= MyName = (CHARVAR) ’SYSPLEX’;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ATTRLIST<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Annotation ::= (CHARVAR) ’SYSPLEX NETWORK’,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ContainsObjects ::= (OBJECTLINKLIST)<br>
+(’GMFHS_Managed_Real_Objects_Class’.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;’SYSPLEX.PLEX1.RALXT1’.’ContainedInView’)<br>
+(’GMFHS_Managed_Real_Objects_Class’.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;’SYSPLEX.PLEX1.RALXT2’.’ContainedInView’)<br>
+(’GMFHS_Managed_Real_Objects_Class’.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;’SYSPLEX.PLEX1.LINK1’.’ContainedInView’)<br>
+(’GMFHS_Managed_Real_Objects_Class’.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;’SYSPLEX.PLEX1.LINK2’.’ContainedInView’)<br>
+(’GMFHS_Managed_Real_Objects_Class’.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;’SYSPLEX.PLEX1’.’ContainedInView’);<br>
+END;</p>
+        <p  style="margin-left:500px;">In this example, a Network_View_Class object named SYSPLEX is defined to<br>
+represent the network view of the sysplex network. The Annotation field of the<br>
+object is assigned the value SYSPLEX NETWORK, which is displayed at the workstation<br>
+with the view. The ContainsObjects field of the SYSPLEX object is linked to the<br>
+ContainedInView fields of the managed real objects that represent the real<br>
+resources that make up the SYSPLEX network.</p>
+        <h3 style="margin-left:500px;">Defining Configuration Views</h3>
+        <p style="margin-left:500px;">Configuration views are created by defining an object to represent the view on one<br>
+of the following classes:</p>
+        <p style="margin-left:500px;"><b>View Type</b></p>
+        <p style="margin-left:550px;"><b>Class Defined</b></p>
+        <p style="margin-left:500px;"><b>Peer </b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Configuration_Peer_View_Class</p>
+        <p style="margin-left:500px;"><b>Physical </b></p>
+            <p  style="margin-left:550px;">Configuration_Physical_Connectivity_View_Class</p>
+          <p style="margin-left:500px;"><b>Logical </b></p>
+            <p  style="margin-left:550px;">Configuration_Logical_Connectivity_View_Class</p>
+        <p style="margin-left:500px;"><b>Backbone </b></p>
+            <p  style="margin-left:550px;">Configuration_Backbone_Connectivity_View_Class</p>
+        <p style="margin-left:550px;">Create one object on its respective class for each configuration view you want to<br>
+display. Because the sample network contains a configuration peer view, an<br>
+example of defining a Configuration_Peer_View_Class object follows. Use a similar<br>
+procedure to define objects on any of the other configuration view type classes.<br>
+The following configuration views can also be dynamically built views:</p>
+        <li style="margin-left:500px;">Backbone</li>
+        <li style="margin-left:500px;">Logical</li>
+        <li style="margin-left:500px;">Physical</li>
+        <p style="margin-left:500px;">For more information about configuration views, see “Object Discovery Process<br>
+Description for Specific Views” on page 92.</p>
+        <p style="margin-left:500px;"><b>Defining Peer Views: </b>Figure 13 on page 44 is a peer view of the token-ring LAN<br>
+component. Peer views are represented by objects in the<br>
+Configuration_Peer_View_Class. Create one object in this class for each peer view<br>
+you want to display.</p>
+        <p  style="margin-left:500px;">Figure 13 on page 44 is a peer view of the token-ring LAN component of the<br>
+sample network. The icon and symbol displayed for each object are determined by<br>
+the DisplayResourceType object to which it is linked. For example, the aggregate<br>
+resource BRIDGE01 is linked to DUIXC_RTN_BRIDGE_AGG. The icon DUIU4N02<br>
+and the hexagon-shaped node symbol are specified by<br>
+DUIXC_RTN_BRIDGE_AGG. Because BRIDGE01 is an aggregate resource, the<br>
+node symbol contains the smaller aggregate symbol as well. The name BRIDGE01<br>
+shown in the view is specified by the DisplayResourceName field of object<br>
+BRIDGE01</p>
+        <p style="margin-left:500px;">Note that the sample network defines a real object named LANMGR.BRIDGE01<br>
+that also has a DisplayResourceName value of BRIDGE01. The BRIDGE01 in this<br>
+view is an object of the GMFHS_Aggregate_Objects_Class.</p>
+        <img style="margin-left:500px;" src="Screenshot%202024-02-10%20140603.png">
+        <p style="margin-left:500px;">Figure 13. Peer View of Token-Ring Network TRLANNET</p>
+        <p style="margin-left:500px;">The configuration peer view of the token-ring LAN network is defined by the<br>
+following RODM load function statement:</p>
+        <p style="margin-left:500px;font-size: 12px;">
+            -- Create Configuration Peer View TRLANNET --<br><br>
+CREATE INVOKER ::= 0000004;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OBJCLASS ::= Configuration_Peer_View_Class;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OBJINST ::= MyName = (CHARVAR) ’TRLANNET_Peer’;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ATTRLIST<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Annotation ::= (CHARVAR) ’Token Ring Network’,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LayoutType ::= (INTEGER) 4,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ConnType ::= (ANONYMOUSVAR) x’80’,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FirstNode ::= (OBJECTLINK)<br>
+(’GMFHS_Managed_Real_Objects_Class’.’LANMGR.10005AC35CA0’.’IsFirstNode’),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SecondNode ::= (OBJECTLINK)<br>
+(’GMFHS_Managed_Real_Objects_Class’.’LANMGR.10005A95E7CC’.’IsSecondNode’),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ContainsObjects ::= (OBJECTLINKLIST)<br>
+(’GMFHS_Managed_Real_Objects_Class’.’LANMGR.10005AC35CA0’.’ContainedInView’)<br>
+(’GMFHS_Managed_Real_Objects_Class’.’LANMGR.10005A95E7CC’.’ContainedInView’)<br>
+(’GMFHS_Managed_Real_Objects_Class’.’LANMGR.10005A89A267’.’ContainedInView’)<br>
+(’GMFHS_Managed_Real_Objects_Class’.’LANMGR.10005A966BAB’.’ContainedInView’)<br>
+(’GMFHS_Managed_Real_Objects_Class’.’LANMGR.10005A95A08C’.’ContainedInView’)<br>
+(’GMFHS_Managed_Real_Objects_Class’.’LANMGR.400076041088’.’ContainedInView’)<br>
+(’GMFHS_Aggregate_Objects_Class’.’BRIDGE01’.’ContainedInView’);<br>
+END;
+        </p>
+        
+        <p style="margin-left:500px;">In this example, a Configuration_Peer_View_Class object named TRLANNET_Peer<br>
+is defined to represent the configuration peer view of the token-ring LAN network.<br>
+The Annotation field of the object is assigned the value Token Ring Network; the<br>
+LayoutType field is assigned the value 4, which specifies radial layout for<br>
+token-ring networks. The ConnType field is assigned value 80, as in the previous<br>
+network view example.
+        </p>
+        <p style="margin-left:500px;">When you create a view, you specify the object names of the objects that appear in<br>
+the view. The object names in the RODM load function statements in this example<br>
+are different from the names shown in Figure 13 on page 44, because the sample<br>
+network uses the DisplayResourceName field to specify the name that is displayed<br>
+for each resource in the token-ring network. For example, the object<br>
+LANMGR.10005AC35CA0 has its DisplayResourceName field set to A0488P21.</p>
+        <p style="margin-left:500px;">The FirstNode field of the TRLANNET_Peer object is linked to the IsFirstNode<br>
+field of the object that is to be displayed at the top of the ring in the configuration<br>
+peer view. The SecondNode field links to the object that is to be displayed to the<br>
+right of the first node in the view. The ContainsObjects field links to the remaining<br>
+objects that are to be displayed in the view. These objects are displayed in the view<br>
+in the order in which they are defined</p>
+        <h3  style="margin-left:500px;">Defining More Detail Views</h3>
+        <p style="margin-left:500px;">More detail views are created by defining an object to represent the view on one of<br>
+the following classes:</p>
+        <p  style="margin-left:500px;"><b>View Type</b></p>
+        <p style="margin-left:500px;"><b style="margin-left: 50px;">Class Defined</b></p>
+        <p  style="margin-left:500px;"><b>Physical</b></p>
+        <p style="margin-left:500px;"></p>
+          <p  style="margin-left:550px;"> More Detail_Physical_View_Class</p>
+        <p  style="margin-left:500px;"><b>Logical</b></p>
+        <p style="margin-left:550px;">More Detail_Logical_View_Class</p>
+        <p  style="margin-left:500px;">Create one object on its respective class for each more detail view you want to<br>
+display. Note that these views can also be dynamically built views.</p>
+        <p  style="margin-left:500px;">The sample network does not include a predefined more detail view. For more<br>
+information about more detail views, see “More Detail Views” on page 95.</p>
+        <h2  style="margin-left:400px;">Defining Layout Parameters</h2>
+        <p style="margin-left:500px;">Layout parameters can be specified for the following types of views:</p>
+        <li style="margin-left:500px;">Network</li>
+        <li style="margin-left:500px;">Configuration</li>
+        <li style="margin-left:500px;">More detail</li>
+        <li style="margin-left:500px;">Exception</li>
+        <h3  style="margin-left:500px;">Defining Layout Parameters for Exception Views</h3>
+        <p style="margin-left:500px;">The grid layout is the only layout algorithm that can be used with exception<br>
+views, and the only view parameter that can be defined for the grid layout<br>
+algorithm is layout width. For information about the grid layout algorithm, see<br>
+Appendix B, “View Layout Facility,” on page 673.</p>
+        <h3 style="margin-left:500px;">Defining Layout Parameters for Network, Configuration, and<br>
+More Detail Views</h3>
+        <p style="margin-left:500px;">When you define a network, configuration, or more detail view, you can specify<br>
+the layout algorithm. You do this by specifying a value in the LayoutType field of<br>
+the view object you define to represent the view. You can define view objects for<br>
+the following classes:</p>
+        <li style="margin-left:500px;">Network_View_Class</li>
+        <li style="margin-left:500px;">Configuration_Peer_View_Class</li>
+        <li style="margin-left:500px;">Configuration_Backbone_View_Class</li>
+        <li style="margin-left:500px;">Configuration_Logical_Connectivity_View_Class</li>
+        <li style="margin-left:500px;">Configuration_Physical_Connectivity_View_Class</li>
+        <li style="margin-left:500px;">More_Detail_Logical_View_Class</li>
+        <li style="margin-left:500px;"> More_Detail_Physical_View_Class</li>
+        <p style="margin-left:500px;">If you do not specify a layout algorithm, the default radial by link type layout<br>
+algorithm is used.</p>
+        <p style="margin-left:500px;">For information about choosing the kind of layout algorithm to use and the<br>
+advantages and disadvantages of each layout algorithm, see Appendix B, “View<br>
+Layout Facility,” on page 673.</p>
+        <p style="margin-left:500px;">Certain layout algorithms require that you provide additional information to help<br>
+it lay the view out correctly. Sometimes this information is specified in the fields of<br><br>
+the view object itself; for example, the LinkCrossOptionValue field specifies the<br>
+amount of effort the radial layout algorithm is to expend trying to untangle<br>
+crossed links. As another example, the FirstNode and SecondNode fields specify<br><br>
+which node is to be placed at the top of the ring, and which node is to be placed<br>
+to the right of the top node, in the radial layout algorithm for token rings.</p>
+        <p style="margin-left:500px;">Additional information can also be specified in the fields of<br>
+Layout_Parameters_For_Object_Class objects. These objects link a view and an<br>
+object that is to be displayed in the view. They specify parameters that apply when<br>
+that object is laid out in a particular view by a particular layout algorithm. One<br>
+Layout_Parameters_For_Object_Class object can be linked to all objects that have<br>
+the same layout parameters.</p>
+        <p style="margin-left:500px;">Examples are the RootNode field, which specifies that the resource linked to this<br>
+Layout_Parameters_For_Object_Class object is to be the root node in a connectivity<br>
+tree when the connectivity tree layout is used, and the LayoutSequence field,<br>
+which specifies for certain layout algorithms where an object linked to this<br>
+Layout_Parameters_For_Object_Class object appears in a sequence of objects.</p>
+        <p style="margin-left:500px;">Table 1 on page 47 lists the fields that can be specified on objects of the following<br>
+classes: </p>
+        <li style="margin-left:500px;">Network_View_Class</li>
+        <li style="margin-left:500px;">Configuration_Peer_View_Class</li>
+        <li style="margin-left:500px;">Configuration_Backbone_View_Class</li>
+        <li style="margin-left:500px;">Configuration_Logical_Connectivity_View_Class</li>
+        <li style="margin-left:500px;">Configuration_Physical_Connectivity_View_Class</li>
+        <li style="margin-left:500px;">More_Detail_Logical_View_Class</li>
+        <li style="margin-left:500px;"> More_Detail_Physical_View_Class</li>
+        <p style="margin-left:500px;">These fields can be optional, required, or not applicable, depending on the layout<br>
+algorithm that is being used. Table 1 on page 47 indicates the optional (O) and<br>
+            required (R) fields.<b> N/A</b> indicates that the parameter is not applicable for that type<br>
+of layout algorithm.</p>
+        <div>
+        <P>Table 1. Layout Algorithms and View Parameters</P>
+            <table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Layout Algorithm</th>
+      <th scope="col">Link<br>
+Cross<br>
+Option<br>
+Value</th>
+      <th scope="col">Bin<br>
+Packing<br>
+Flag</th>
+      <th scope="col">Bus<br>
+Node</th>
+        <th scope="col">First<br>
+Node</th>
+        <th scope="col">Sirst<br>
+Node</th>
+        <th scope="col">Layout<br>
+Orien-tation</th>
+        <th scope="col">Default<br>
+Row<br>
+Spacing</th>
+        <th scope="col">Ellipse<br>
+Aspect<br>
+Ratio<br>
+Width/<br>
+Height</th>
+        <th scope="col">Layout<br>
+Width<br></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">Radial by cluster ID</th>
+      <td>O</td>
+      <td>O</td>
+      <td>N/A</td>
+        <td>N/A</td>
+      <td>N/A</td>
+      <td>N/A</td>
+        <td>N/A</td>
+      <td>N/A</td>
+      <td>N/A</td>
+    </tr>
+    <tr>
+      <th scope="row">Radial by link type</th>
+      <td>O</td>
+      <td>O</td>
+      <td>N/A</td>
+        <td>N/A</td>
+      <td>N/A</td>
+      <td>N/A</td>
+        <td>N/A</td>
+      <td>N/A</td>
+      <td>N/A</td>
+    </tr>
+    <tr>
+      <th scope="row">Local area net</th>
+      <td>O</td>
+      <td>O</td>
+      <td>N/A</td>
+        <td>N/A</td>
+      <td>N/A</td>
+      <td>N/A</td>
+        <td>N/A</td>
+      <td>N/A</td>
+      <td>N/A</td>
+    </tr>
+      <tr>
+      <th scope="row">Token-ring net</th>
+      <td>N/A</td>
+      <td>N/A</td>
+      <td>N/A</td>
+        <td>R</td>
+      <td>R</td>
+      <td>N/A</td>
+        <td>N/A</td>
+      <td>N/A</td>
+      <td>N/A</td>
+    </tr>
+      <tr>
+      <th scope="row">LAN with central bus</th>
+      <td>N/A</td>
+      <td>N/A</td>
+      <td>R</td>
+        <td>N/A</td>
+      <td>N/A</td>
+      <td>N/A</td>
+        <td>N/A</td>
+      <td>N/A</td>
+      <td>N/A</td>
+    </tr>
+      <tr>
+      <th scope="row">Hierarchical with<br>
+proximity</th>
+      <td>N/A</td>
+      <td>N/A</td>
+      <td>N/A</td>
+        <td>N/A</td>
+      <td>N/A</td>
+      <td>O</td>
+        <td>O</td>
+      <td>N/A</td>
+      <td>N/A</td>
+    </tr>
+      <tr>
+      <th scope="row">Single ellipse</th>
+      <td>N/A</td>
+      <td>N/A</td>
+      <td>N/A</td>
+        <td>N/A</td>
+      <td>N/A</td>
+      <td>N/A</td>
+        <td>N/A</td>
+      <td>O</td>
+      <td>N/A</td>
+    </tr>
+      <tr>
+      <th scope="row">Connectivity tree</th>
+      <td>N/A</td>
+      <td>N/A</td>
+      <td>N/A</td>
+        <td>N/A</td>
+      <td>N/A</td>
+      <td>O</td>
+        <td>O</td>
+      <td>N/A</td>
+      <td>N/A</td>
+    </tr>
+      <tr>
+      <th scope="row">Grid</th>
+      <td>N/A</td>
+      <td>N/A</td>
+      <td>N/A</td>
+        <td>N/A</td>
+      <td>N/A</td>
+      <td>N/A</td>
+        <td>N/A</td>
+      <td>N/A</td>
+      <td>O</td>
+    </tr>
+  </tbody>
+</table>
+        </div>
+        <p style="margin-left:500px;">For information about the layout parameters and about the layout algorithms, see<br>
+Appendix B, “View Layout Facility,” on page 673.</p>
+        <p style="margin-left:500px;">Layout Parameters: Table 2 lists the layout parameters that can be specified on<br>
+Layout_Parameters_For_Object_Class objects and indicates for which type of layout<br>
+            algorithms the layout parameters are optional (<b>O</b>) or required (<b>R</b>). N/A indicates<br>
+that the parameter is not applicable for that type of layout algorithm. For more<br>
+information about these layout parameters and the layout algorithms, see<br>
+Appendix B, “View Layout Facility,” on page 673.</p>
+        <p style="margin-left:500px;">Table 2. Layout Algorithms and Layout Parameters</p>
+                <div style="margin-left:500px;">
+            <table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Layout Algorithm</th>
+      <th scope="col">Resource<br>
+Layout<br>
+Char<br>
+</th>
+      <th scope="col">Layout<br>
+Sequence
+</th>
+      <th scope="col">Hierarch.<br>
+Priority</th>
+        <th scope="col">Root<br>
+Node</th>
+         <th scope="col">Cluster<br>
+IDValue</th>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">Radial by cluster ID</th>
+      <td>N/A</td>
+        <td>N/A</td>
+      <td>N/A</td>
+      <td>N/A</td>
+        <td>R</td>
+    </tr>
+    <tr>
+      <th scope="row">Radial by link type</th>
+      <td>O</td>
+      <td>N/A</td>
+      <td>N/A</td>
+        <td>N/A</td>
+      <td>N/A</td>
+    </tr>
+    <tr>
+      <th scope="row">Local area net</th>
+      <td>N/A</td>
+        <td>O</td>
+      <td>N/A</td>
+      <td>N/A</td>
+        <td>N/A</td>
+    </tr>
+      <tr>
+      <th scope="row">Token-ring net</th>
+      <td>N/A</td>
+        <td>O</td>
+      <td>N/A</td>
+      <td>N/A</td>
+        <td>N/A</td>
+    </tr>
+      <tr>
+      <th scope="row">LAN with central bus</th>
+      <td>N/A</td>
+        <td>O</td>
+      <td>N/A</td>
+      <td>N/A</td>
+        <td>N/A</td>
+    </tr>
+       <tr>
+      <th scope="row">Hierarchical with proximity</th>
+      <td>N/A</td>
+        <td>N/A</td>
+      <td>R</td>
+      <td>N/A</td>
+        <td>N/A</td>
+    </tr>
+       <tr>
+           <th scope="row">Single ellipse</th>
+      <td>N/A</td>
+        <td>O</td>
+      <td>N/A</td>
+      <td>N/A</td>
+        <td>N/A</td>
+    </tr>
+       <tr>
+      <th scope="row">Connectivity tree</th>
+      <td>N/A</td>
+        <td>O</td>
+      <td>R</td>
+      <td>R</td>
+        <td>N/A</td>
+    </tr>
+       <tr>
+      <th scope="row">Grid</th>
+      <td>N/A</td>
+      <td>O</td>
+        <td>O</td>
+      <td>N/A</td>
+      <td>N/A</td>
+    </tr>
+  </tbody>
+</table>
+        </div>
+        <P style="margin-left:500px;">In the sample network, Layout_Parameters_For_Object_Class object LPTRLAN<br>
+contains the parameters that specify how aggregate object TRLAN is to be<br>
+displayed in network view SAMPNET, as illustrated in Figure 9 on page 29. The<br>
+following is the RODM load function statement that defines the LPTRLAN object:</P>
+        <p style="margin-left:500px;font-size: 12px;">-- Create Layout Parameters for Object TRLAN --<br>
+CREATE INVOKER ::= 0000004;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OBJCLASS ::= Layout_Parameters_For_Object_Class;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OBJINST ::= MyName = (CHARVAR) ’LPTRLAN’;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ATTRLIST<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Object ::= (OBJECTLINK)<br>
+(’GMFHS_Aggregate_Objects_Class’.’TRLAN’.’LayoutParmList’),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;View ::= (OBJECTLINKLIST)<br>
+(’Network_View_Class’.’SAMPNET’.’LayoutParmList’),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HierarchicalPriority ::= (INTEGER) 4;<br>
+END;</p>
+        <p style="margin-left:500px;">The Object field specifies the object to which the layout parameters apply; the<br>
+View field specifies the view to which the layout parameters apply. The<br>
+HierarchicalPriority field specifies that the TRLAN object is to appear in the fourth<br>
+row of the hierarchical layout in the network view.</p>
+        <p  style="margin-left:500px;">Layout_Parameters_For_Object_Class object LPB3088P2P contains the parameters<br>
+that specify how shadow object NETB.B3088P2 is to be displayed in network view<br>
+of the sysplex network, as illustrated in Figure 12 on page 42. The following<br>
+RODM load function statement defines the LPB3088P2P layout parameters object:</p>
+         <p style="margin-left:500px;font-size: 12px;">-- Create Layout Parameters for Object TRLAN --<br>
+CREATE INVOKER ::= 0000004;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OBJCLASS ::= Layout_Parameters_For_Object_Class;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OBJINST ::= MyName = (CHARVAR) ’LPTRLAN’;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ATTRLIST<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Object ::= (OBJECTLINK)<br>
+(’GMFHS_Aggregate_Objects_Class’.’TRLAN’.’LayoutParmList’),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;View ::= (OBJECTLINKLIST)<br>
+(’Network_View_Class’.’SAMPNET’.’LayoutParmList’),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LayoutSequence ::= (INTEGER) 0,
+RootNode ::= (ANONYMOUSVAR) <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;        RootNode ::= (ANONYMOUSVAR) X’80’;<br>
+             
+END;</p>
+        <p style="margin-left:500px;">As in the previous example, the Object and View fields specify the object and the<br>
+view to which these parameters are associated. The LayoutSequence field is<br>
+assigned the value 0, which specifies that the nodes are to be laid out in no<br>
+particular order in the view. The RootNode field specifies that shadow object<br>
+NET.B3088P2 is to be displayed as a root node in the connectivity tree.</p>
+        <h5 style="margin-left:500px;">Defining Layout Parameters for Dynamically Built More Detail<br>
+Views</h5>
+        <p style="margin-left:500px;">All types of more detail views can be dynamically built. You can specify the layout<br>
+of more detail views even though you do not explicitly define the more detail<br>
+views. More detail views are created when an NetView management console<br>
+operator chooses More Detail from a context menu. GMFHS attempts to build the<br>
+following more detail views for objects defined in RODM: </p>
+        <li style="margin-left:500px;">The more detail logical view contains all of the objects specified by the<br>
+ComposedOfLogical field of the selected object.</li>
+        <li  style="margin-left:500px;">The more detail physical view contains all of the objects specified by the<br>
+ComposedOfPhysical field of the selected object. </li>
+        <li style="margin-left:500px;">The configuration children II view contains all of the objects specified by the<br>
+RelFieldNamesA field of the View_Information_Object_Class object for the<br>
+configuration children II view</li>
+        <li  style="margin-left:500px;">The configuration children III view contains all of the objects specified by the<br>
+RelFieldNamesA field of the View_Information_Object_Class object for the<br>
+configuration children III view.</li>
+        <p style="margin-left:500px;">If the value of the ComposedOfLogical field or the ComposedOfPhysical field is<br>
+null, the corresponding view is not built. Refer to “Understanding Views” in the<br>
+            <i>IBM Tivoli NetView for z/OS User's Guide: NetView Management Console</i> for<br>
+information about displaying more detail views</p>
+        <p style="margin-left:500px;">You can specify layout parameters for each of the more detail views created from a<br>
+selected object. Complete the following steps to specify layout parameters for more<br>
+            detail views. Figure 14 on page 50 shows the objects (<b>A</b>, <b>B</b>, and <b>C</b>) and links<br>
+(<b>1</b> and <b>2</b>) you create.</p>
+        <p style="margin-left:500px;">1. Select the object for which you want to define more-detail-view layout<br>
+parameters. You are defining layout parameters for the more detail views<br>
+created when this object is selected in another view.<br> For this example, select the aggregate object TRLAN (<b>A</b>) in the sample<br>
+network.<br>
+<p style="margin-left:500px;">2. Choose the more detail view for which you are defining layout parameters:<br>
+more detail logical or more detail physical.<br>
+The TRLAN object has valid values for both ComposedOfLogical and<br>
+ComposedOfPhysical, so two more detail views are created. For this example,<br>
+choose to define layout parameters for the more detail physical view.<br>
+            <p style="margin-left:500px;">3. Create an object of the Layout_Parameters_For_View_Class to <br>represent the
+view.</p>
+        <p  style="margin-left:500px;">Hint: Layout_Parameters_For_View_Class objects are similar to<br>
+Network_View_Class objects</p>
+        <p  style="margin-left:500px;">The following is part of the RODM load function statement that creates the<br>
+object (<b>b</b>) for this example. The sample member DUIFSNET contains the<br>
+complete statements.</p>
+        <p style="margin-left:500px;font-size:12px;">CREATE INVOKER ::= 0000004;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OBJCLASS ::= Layout_Parameters_For_View_Class;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OBJINST ::= MyName = (CHARVAR)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;’View_Layout_Parms_For_TRLAN_More_Detail_Physical’;</p>
+        <p style="margin-left:500px;">4. Link the SelectedResource field of the object you created in Step 3 to the<br>
+DetailViewLayoutForSelectedResource field of the object you selected in Step 1. <br>The following is part of the RODM load function statement that creates this<br>
+link, shown as <b>1</b> in Figure 14 on page 50:</p>
+        <p style="margin-left:510px;font-size:12px;">SelectedResource ::= (OBJECTLINKLIST) (’GMFHS_Aggregate_Objects_Class’.<br>
+’TRLAN’.’DetailViewLayoutForSelectedResource’),</p>
+        <p style="margin-left:500px;">5. Specify which more detail view type this Layout_Parameters_For_View_Class<br>
+object (<b>B</b>) represents. You specify the view type by linking the ViewClass field<br>
+of this object to the DetailViewLayout field of an object (<b>C</b>) in the<br>
+View_Information_Reference_Class that represents the view type:</p>
+        <li style="margin-left:500px;">More_Detail_Logical_View_Reference</li>
+        <li style="margin-left:500px;">More_Detail_Physical_View_Reference
+        </li>
+        <li style="margin-left:500px;">Configuration_Children_II_View_Reference</li>
+        <li style="margin-left:500px;">Configuration_Children_III_View_Reference</li>
+        <p  style="margin-left:500px;">The following is part of the RODM load function statement that creates the link<br>
+specifying a more detail physical view, shown as <b>2</b> in Figure 14 on page 50:</p>
+        <p style="margin-left:510px;font-size:12px;">ViewClass ::= (OBJECTLINKLIST) (’View_Information_Reference_Class’.<br>
+’More_Detail_Physical_View_Reference’.’DetailViewLayout’),</p>
+        <p  style="margin-left:500px;">6. Specify the layout parameters for the view you are defining. The remaining<br>
+fields of the Layout_Parameters_For_View_Class object (<b>B</b>) specify the layout<br>
+algorithm and other view parameters. Table 1 on page 47 lists the required<br>
+parameters for each layout algorithm.</p>
+        <p style="margin-left:500px;">For this example, choose radial layout for token ring networks as the layout<br>
+algorithm. Table 1 on page 47 shows that the FirstNode field and SecondNode<br>
+field are required for this layout. The following is part of the RODM load<br>
+function statement that specifies the layout algorithm and the FirstNode and<br>
+SecondNode fields:</p>
+        <p style="margin-left:510px;font-size:12px;">LayoutType ::= (INTEGER) 4,<br>
+FirstNode ::= (OBJECTLINK) (’GMFHS_Managed_Real_Objects_Class’.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;’LANMGR.10005AC35CA0’.’IsFirstNode’),<br>
+SecondNode ::= (OBJECTLINK) (’GMFHS_Managed_Real_Objects_Class’.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;’LANMGR.10005A95E7CC’.’IsSecondNode’);</p>
+        <p style="margin-left:500px;">7. If you want to use this same Layout_Parameters_For_View_Class object for<br>
+additional objects or views, create additional links. All of the link fields accept<br>
+            multiple values.<br></p>
+ <p style="margin-left:500px;">8. If you need to control the layout of individual objects in the more detail view, <br>define layout parameters for the objects. Some layout algorithms require layout<br>
+parameters for the objects: Table 2 on page 47 lists required parameters.<br>
+See “Adding Layout Parameters for Objects in More Detail Views” for<br>
+instructions on defining layout parameters.</p>
+        <img style="margin-left:500px;"src="Screenshot%202024-02-10%20162601.png">
+        <br>
+        <p style="margin-left:500px;">Figure 14. Defining Layout Parameters for More Detail Views</p>
+        <p  style="margin-left:500px;"><b>Adding Layout Parameters for Objects in More Detail Views:</b></p>
+        <br>
+        <p style="margin-left:500px;"><b>Note:</b> You can also define layout parameters for individual objects that appear in<br>
+more detail views. You define these layout parameters with<br>
+Layout_Parameters_For_Object_Class objects. Links specify which objects and<br>
+views the layout parameters apply to. Complete the following steps to specify<br>
+layout parameters for more detail views. Figure 15 on page 53 shows the objects<br>
+and links you create.</p>
+        <p style="margin-left:500px;">1. Identify the objects in a more detail view that you want to define layout<br>
+parameters for. The objects must be specified by the ComposedOfLogical, the</p>
+    </body>
+</html>
